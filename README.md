@@ -1,16 +1,21 @@
 # MiRecetaDigital API
 
+
+Bienvenido a la documentación del API de MiRecetaDigital. Todas las llamadas al API requieren la presencia de un token de autentificación generado por nosotros. Si deseas implementar los servicios de MiRecetaDigital en tu sitio web puedes contactarnos a `direccion@mirecetadigital.com`.
+
+
 Cada App que utilice el servicio de MRD recibirá uno o más tokens de autenticación. Cada token podrá tener uno o más de los siguientes permisos:
 
- - "MANAGE_MEDICS"
- - "READ_MEDICS"
- - "MANAGE_PATIENTS"
- - "READ_PATIENTS"
- - "MANAGE_PRESCRIPTIONS"
- - "READ_PRESCRIPTIONS"
- - "MANAGE_ANALYSIS"
- - "READ_ANALYSIS"
-
+```
+"MANAGE_MEDICS"
+"READ_MEDICS"
+"MANAGE_PATIENTS"
+"READ_PATIENTS"
+"MANAGE_PRESCRIPTIONS"
+"READ_PRESCRIPTIONS"
+"MANAGE_ANALYSIS"
+"READ_ANALYSIS"
+```
  
 Los tokens serán generados por parte de MRD y tendrán que ser enviados a través del parámetro _token dentro de cada petición a la API.
 
@@ -29,7 +34,7 @@ Cada petición POST tendrá que contener en su payload un objeto JSON con la sig
 {
 	"jsonrpc":"2.0",
 	"method":"<modelo>.<accion>",
-	"id":<identificador de peticion (arbitrario, generado por cliente)>,
+	"id":"<identificador de peticion (arbitrario, generado por cliente)>",
 	"params":{
 		"_token":"<token generado por MRD>",
 		"foo":"bar"
@@ -71,7 +76,7 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ```json
 {
-	"live_mode":1
+	"live_mode":1,
 	"id":1231,
 	"medic_id":1231,
 	"user_id":4563,
@@ -90,7 +95,7 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ```json
 {
-	"live_mode":1
+	"live_mode":1,
 	"id":1232,
 	"patient_id":1232,
 	"user_id":4563,
@@ -106,17 +111,17 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ```json
 {
-	"live_mode":1
+	"live_mode":1,
 	"medic_id":1231,
 	"patient_id":1232,
-	"medic":{object medic}
-	"patient":{object patient},
+	"medic":"{object medic}",
+	"patient":"{object patient}",
 	"timestamp_created":1593701796,
 	"timestamp_dispatched":1593701796,
 	"timestamp_expiration":1593701796,
 	"dispatched":0,
 	"qr_hash":"SKHRUEK12372SHA",
-	"digital_signature":"{hash de firma digital}"
+	"digital_signature":"{hash de firma digital}",
 	"json":"{objeto json firmado con datos de receta}",
 	"medicines":[
 		{
@@ -164,7 +169,7 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ```json
 {
-	"id":123,,
+	"id":123,
 	"analyses_request_id":123,
 	"medic_id":1231,
 	"patient_id":1232,
@@ -230,7 +235,7 @@ returns => { medic_id: int, medic: MEDIC }
 
 ```json
 {
-	"medic_id":1234
+	"medic_id":1234,
 	"first_name":"?",
 	"last_name":"?",
 	"email":"?",
@@ -249,7 +254,7 @@ returns => { medic: MEDIC }
 
 ```json
 {
-	medic_id:123
+	"medic_id":123
 }
 ```
 returns => { medic: MEDIC }
@@ -282,7 +287,7 @@ returns => { patient_id: int, patient: PATIENT }
 
 ```json
 {
-	"patient_id":123
+	"patient_id":123,
 	"first_name":"Juan",
 	"last_name":"Pérez Pérez",
 	"email":"juan@mail.com",
@@ -306,7 +311,7 @@ returns => { patient: PATIENT }
 ## patient.list
 ```json
 {
-	medic_id:123
+	"medic_id":123
 }
 ```
 returns => { patients: PATIENT [ ] }
@@ -425,7 +430,7 @@ returns => { analyses_request: ANALYSIS_REQUEST [ ] }
 
 ```json
 {
-	search:""
+   "search":""
 }
 ```
 returns => { medicines: MEDICINE [ ] }
