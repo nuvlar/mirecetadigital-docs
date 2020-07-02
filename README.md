@@ -263,6 +263,7 @@ returns => { medic: MEDIC }
 
 ```json
 {
+    "search": "search string"
 }
 ```
   returns => { medics: MEDIC [ ] }
@@ -311,7 +312,7 @@ returns => { patient: PATIENT }
 ## patient.list
 ```json
 {
-	"medic_id":123
+	"search": "search string"
 }
 ```
 returns => { patients: PATIENT [ ] }
