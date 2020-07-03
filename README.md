@@ -41,13 +41,13 @@ Cada petición POST tendrá que contener en su payload un objeto JSON con la sig
   
 ```json
 {
-	"jsonrpc":"2.0",
-	"method":"<modelo>.<accion>",
-	"id":"<identificador de peticion (arbitrario, generado por cliente)>",
-	"params":{
-		"_token":"<token generado por MRD>",
-		"foo":"bar"
-	}
+   "jsonrpc":"2.0",
+   "method":"<modelo>.<accion>",
+   "id":"<identificador de peticion (arbitrario, generado por cliente)>",
+   "params":{
+      "_token":"<token generado por MRD>",
+      "foo":"bar"
+   }
 }
 ```
   
@@ -57,12 +57,12 @@ A cada una de estas peticiones el servidor responde con un objeto JSON como el s
   
 ```json
 {
-	"jsonrpc": "2.0",
-	"id":"<identificador de peticion (arbitrario, generado por cliente)>",
-	"result": {
+   "jsonrpc": "2.0",
+   "id":"<identificador de peticion (arbitrario, generado por cliente)>",
+   "result": {
       "live_mode":1,
-		"foo":"bar"
-	}
+      "foo":"bar"
+   }
 }
 ```
 
@@ -70,13 +70,13 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ```json
 {
-	"jsonrpc": "2.0",
-	"id": "<identificador de peticion (arbitrario, generado por cliente)>",
-	"error": {
-		"code": 10001,
-		"message": "Hubo un error",
-		"data": ""
-	}
+   "jsonrpc": "2.0",
+   "id": "<identificador de peticion (arbitrario, generado por cliente)>",
+   "error": {
+      "code": 10001,
+      "message": "Hubo un error",
+      "data": ""
+   }
 }
 ```
 
@@ -87,79 +87,79 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ```json
 {
-	"live_mode":1,
-	"id":1231,
-	"medic_id":1231,
-	"user_id":4563,
-	"first_name":"Juan",
-	"last_name":"Pérez Pérez",
-	"email":"juan@mail.com",
-	"license":12345678,
-	"institution":"Universidad Nacional Autónoma de México",
-	"specialty":"Cirugía General",
-	"work_place":"Centro Médico Nacional, Calle.....",
-	"work_phone":5555555555,
-	"public_certificate":"https://mirecetadigital.com/link_a_archivo_pem"
+   "live_mode":1,
+   "id":1231,
+   "medic_id":1231,
+   "user_id":4563,
+   "first_name":"Juan",
+   "last_name":"Pérez Pérez",
+   "email":"juan@mail.com",
+   "license":12345678,
+   "institution":"Universidad Nacional Autónoma de México",
+   "specialty":"Cirugía General",
+   "work_place":"Centro Médico Nacional, Calle.....",
+   "work_phone":5555555555,
+   "public_certificate":"https://mirecetadigital.com/link_a_archivo_pem"
 {
 ```
 ## PATIENT
 
 ```json
 {
-	"live_mode":1,
-	"id":1232,
-	"patient_id":1232,
-	"user_id":4563,
-	"first_name":"Juan",
-	"last_name":"Pérez Pérez",
-	"email":"juan@mail.com",
-	"birthdate":"1991-03-24",
-	"weight":83.5,
-	"height":186.2
+   "live_mode":1,
+   "id":1232,
+   "patient_id":1232,
+   "user_id":4563,
+   "first_name":"Juan",
+   "last_name":"Pérez Pérez",
+   "email":"juan@mail.com",
+   "birthdate":"1991-03-24",
+   "weight":83.5,
+   "height":186.2
 }
 ```
 ## PRESCRIPTION
 
 ```json
 {
-	"live_mode":1,
-	"medic_id":1231,
-	"patient_id":1232,
-	"medic":"{object medic}",
-	"patient":"{object patient}",
-	"timestamp_created":1593701796,
-	"timestamp_dispatched":1593701796,
-	"timestamp_expiration":1593701796,
-	"dispatched":0,
-	"qr_hash":"SKHRUEK12372SHA",
-	"digital_signature":"{hash de firma digital}",
-	"json":"{objeto json firmado con datos de receta}",
-	"medicines":[
-		{
-			"id":123,
-			"medicine_id":123,
-			"name":"Flanax",
-			"group":0,
-			"group_name":"NO_CONTROLADO",
-			"observations":"Nombre comercial de Bayer para medicamento con naproxeno sódico como ingrediente activo",
-			"units":2,
-			"dispatched":1,
-			"indications":"Tomar una cápsula cada 8 horas los 4 días siguientes al procedimiento",
-			"active_ingredients":[
-				{
-					"id":234,
-					"name":"naproxeno sódico"
-				}
-			],
-			"dispatches":[
-				{
-					"id":826,
-					"timestamp_dispatched":1593701796
-				}
-			]
-			
-		}
-	]
+   "live_mode":1,
+   "medic_id":1231,
+   "patient_id":1232,
+   "medic":"{object medic}",
+   "patient":"{object patient}",
+   "timestamp_created":1593701796,
+   "timestamp_dispatched":1593701796,
+   "timestamp_expiration":1593701796,
+   "dispatched":0,
+   "qr_hash":"SKHRUEK12372SHA",
+   "digital_signature":"{hash de firma digital}",
+   "json":"{objeto json firmado con datos de receta}",
+   "medicines":[
+      {
+         "id":123,
+         "medicine_id":123,
+         "name":"Flanax",
+         "group":0,
+         "group_name":"NO_CONTROLADO",
+         "observations":"Nombre comercial de Bayer para medicamento con naproxeno sódico como ingrediente activo",
+         "units":2,
+         "dispatched":1,
+         "indications":"Tomar una cápsula cada 8 horas los 4 días siguientes al procedimiento",
+         "active_ingredients":[
+            {
+               "id":234,
+               "name":"naproxeno sódico"
+            }
+         ],
+         "dispatches":[
+            {
+               "id":826,
+               "timestamp_dispatched":1593701796
+            }
+         ]
+         
+      }
+   ]
 }
 ```
 
@@ -167,12 +167,12 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ```json
 {
-	"id":123,
-	"analysis_id":123,
-	"name":"Perfil tiroideo T4",
-	"description":"Examen sanguíneo utilizado para medir el nivel de a hormonas tiroideas libres y hormonas vinculadas a proteínas portadoras",
-	"type":1,
-	"type_name":"LABORATORIO"
+   "id":123,
+   "analysis_id":123,
+   "name":"Perfil tiroideo T4",
+   "description":"Examen sanguíneo utilizado para medir el nivel de a hormonas tiroideas libres y hormonas vinculadas a proteínas portadoras",
+   "type":1,
+   "type_name":"LABORATORIO"
 }
 ```
 
@@ -180,46 +180,46 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ```json
 {
-	"id":123,
-	"analyses_request_id":123,
-	"medic_id":1231,
-	"patient_id":1232,
-	"timestamp_created":1593701796,
-	"timestamp_dispatched":1593701796,
-	"timestamp_expiration":1593701796,
-	"qr_hash":"FHEUHFSK23JI423",
-	"analysis_url":"https://mirecetadigital.com/link_a_archivo_de_resultado_de_análisis",
-	"analyses":[
-		{
-			"id":123,
-			"analysis_id":123,
-			"name":"Perfil tiroideo T4",
-			"description":"Examen sanguíneo utilizado para medir el nivel de a hormonas tiroideas libres y hormonas vinculadas a proteínas portadoras",
-			"type":1,
-			"type_name":"LABORATORIO",
-			"observations":"Indicaciones a llevarse a cabo por parte del laboratorio",
-			"motive":"Paciente presenta síntomas de hipotiroidismo.",
-			"indications":"Atender al examen en ayuno."
-		}
-	]
+   "id":123,
+   "analyses_request_id":123,
+   "medic_id":1231,
+   "patient_id":1232,
+   "timestamp_created":1593701796,
+   "timestamp_dispatched":1593701796,
+   "timestamp_expiration":1593701796,
+   "qr_hash":"FHEUHFSK23JI423",
+   "analysis_url":"https://mirecetadigital.com/link_a_archivo_de_resultado_de_análisis",
+   "analyses":[
+      {
+         "id":123,
+         "analysis_id":123,
+         "name":"Perfil tiroideo T4",
+         "description":"Examen sanguíneo utilizado para medir el nivel de a hormonas tiroideas libres y hormonas vinculadas a proteínas portadoras",
+         "type":1,
+         "type_name":"LABORATORIO",
+         "observations":"Indicaciones a llevarse a cabo por parte del laboratorio",
+         "motive":"Paciente presenta síntomas de hipotiroidismo.",
+         "indications":"Atender al examen en ayuno."
+      }
+   ]
 }
 ```
 ## MEDICINE
 
 ```json
 {
-	"id":123,
-	"medicine_id":123,
-	"name":"Flanax",
-	"group":0,
-	"group_name":"NO_CONTROLADO",
-	"observations":"Nombre comercial de Bayer para medicamento con naproxeno sódico como ingrediente activo",
-	"active_ingredients":[
-		{
-			"id":234,
-			"name":"naproxeno sódico"
-		}
-	]
+   "id":123,
+   "medicine_id":123,
+   "name":"Flanax",
+   "group":0,
+   "group_name":"NO_CONTROLADO",
+   "observations":"Nombre comercial de Bayer para medicamento con naproxeno sódico como ingrediente activo",
+   "active_ingredients":[
+      {
+         "id":234,
+         "name":"naproxeno sódico"
+      }
+   ]
 }
 ```
 
@@ -248,16 +248,16 @@ Utiliza esta llamda para agregar un médico a tu app.
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"first_name":"",
-	"last_name":"",
-	"email":"",
-	"license":"",
-	"institution":"",
-	"speciality":"",
-	"work_place":"",
-	"work_phone":"",
-	"public_certificate":""
+   "_token":"<API_TOKEN>",
+   "first_name":"",
+   "last_name":"",
+   "email":"",
+   "license":"",
+   "institution":"",
+   "speciality":"",
+   "work_place":"",
+   "work_phone":"",
+   "public_certificate":""
 }
 ```
 returns => { medic_id: int, medic: MEDIC }
@@ -286,17 +286,17 @@ Llamada utilizada para cambiar los datos del médico.
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"medic_id":1234,
-	"first_name":"?",
-	"last_name":"?",
-	"email":"?",
-	"license":"?",
-	"institution":"?",
-	"speciality":"?",
-	"work_place":"?",
-	"work_phone":"?",
-	"public_certificate":"?"
+   "_token":"<API_TOKEN>",
+   "medic_id":1234,
+   "first_name":"?",
+   "last_name":"?",
+   "email":"?",
+   "license":"?",
+   "institution":"?",
+   "speciality":"?",
+   "work_place":"?",
+   "work_phone":"?",
+   "public_certificate":"?"
 }
 ```
 returns => { medic: MEDIC }
@@ -317,8 +317,8 @@ Llamada para traer la información de un médico desde el API.
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"medic_id":123
+   "_token":"<API_TOKEN>",
+   "medic_id":123
 }
 ```
 returns => { medic: MEDIC }
@@ -338,7 +338,7 @@ Lista los médicos en un arreglo.
 
 ```json
 {
-	"_token":"<API_TOKEN>",
+   "_token":"<API_TOKEN>",
     "search": "search string"
 }
 ```
@@ -365,13 +365,13 @@ Se crea un paciente en la plataforma.
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"first_name":"Juan",
-	"last_name":"Pérez Pérez",
-	"email":"juan@mail.com",
-	"birthdate":"1991-03-24",
-	"weight":83.5,
-	"height":186.2
+   "_token":"<API_TOKEN>",
+   "first_name":"Juan",
+   "last_name":"Pérez Pérez",
+   "email":"juan@mail.com",
+   "birthdate":"1991-03-24",
+   "weight":83.5,
+   "height":186.2
 }
 ```
 
@@ -398,14 +398,14 @@ Edita un paciente
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"patient_id":123,
-	"first_name":"Juan",
-	"last_name":"Pérez Pérez",
-	"email":"juan@mail.com",
-	"birthdate":"1991-03-24",
-	"weight":83.5,
-	"height":186.2
+   "_token":"<API_TOKEN>",
+   "patient_id":123,
+   "first_name":"Juan",
+   "last_name":"Pérez Pérez",
+   "email":"juan@mail.com",
+   "birthdate":"1991-03-24",
+   "weight":83.5,
+   "height":186.2
 }
 ```
 returns => { patient: PATIENT }
@@ -425,8 +425,8 @@ Solicita la información de un paciente
   
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"patient_id":123
+   "_token":"<API_TOKEN>",
+   "patient_id":123
 }
 ```
 returns => { patient: PATIENT }
@@ -447,8 +447,8 @@ Lista los pacientes de la app
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"search": "search string"
+   "_token":"<API_TOKEN>",
+   "search": "search string"
 }
 ```
 returns => { patients: PATIENT [ ] }
@@ -469,9 +469,9 @@ Utiliza esta llamada para decodificar el archivo .key de la e.firma del doctor h
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"key_file":"",
-	"password":""
+   "_token":"<API_TOKEN>",
+   "key_file":"",
+   "password":""
 }
 ```
 returns => { pem: string }
@@ -496,16 +496,16 @@ Crea un texto con un objeto JSON y un token de autentificación. El objeto JSON 
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"medic_id":123,
-	"patient_id":456,
-	"medicines":[
-		{
-			"medicine_id":123,
-			"indications":"Tomar cada 8 horas por 3 días",
-			"units":2
-		}
-	]
+   "_token":"<API_TOKEN>",
+   "medic_id":123,
+   "patient_id":456,
+   "medicines":[
+      {
+         "medicine_id":123,
+         "indications":"Tomar cada 8 horas por 3 días",
+         "units":2
+      }
+   ]
 }
 ``` 
 
@@ -530,12 +530,12 @@ Crea una receta a partir del JSON de receta firmado con la librería de Javascri
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"medic_id":123,
-	"patient_id":456,
-	"prescription_json":"JSON string regresado por prescription.createJson",
-	"digital_signature":"Firma calculada con la librería de JS y la llave privada del doctor.",
-	"prescription_token":"Token regresado por prescription.createJson"
+   "_token":"<API_TOKEN>",
+   "medic_id":123,
+   "patient_id":456,
+   "prescription_json":"JSON string regresado por prescription.createJson",
+   "digital_signature":"Firma calculada con la librería de JS y la llave privada del doctor.",
+   "prescription_token":"Token regresado por prescription.createJson"
 }
 ```
   
@@ -556,8 +556,8 @@ Solicita los datos de una receta
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"prescription_id":123
+   "_token":"<API_TOKEN>",
+   "prescription_id":123
 }
 ```
 
@@ -578,8 +578,8 @@ Lista las recetas de la app
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"medic_id":123
+   "_token":"<API_TOKEN>",
+   "medic_id":123
 }
 ```
 
@@ -602,8 +602,8 @@ Usado para buscar analisis a poner en solicitudes de laboratorio / gabinete
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"search":"" 
+   "_token":"<API_TOKEN>",
+   "search":"" 
 }
 ```
 returns => { analyses: ANALYSIS [ ] }
@@ -629,17 +629,17 @@ Crea una solicitud de análisis, para que un laboratorio o gabinete la realice
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"medic_id":123,
-	"patient_id":456,
-	"analyses":[
-		{
-			"id":111,
-			"observations":"",
-			"motives":"",
-			"indications":""
-		}
-	]
+   "_token":"<API_TOKEN>",
+   "medic_id":123,
+   "patient_id":456,
+   "analyses":[
+      {
+         "id":111,
+         "observations":"",
+         "motives":"",
+         "indications":""
+      }
+   ]
 }
 ```
 returns => { analysis_request_id: int, analysis_request: ANALYSIS_REQUEST }
@@ -659,8 +659,8 @@ Solicita la información de una solicitud de análisis
 
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"analyses_request_id":1234
+   "_token":"<API_TOKEN>",
+   "analyses_request_id":1234
 }
 ```
 
@@ -681,8 +681,8 @@ Lista las solicitudes de análisis de la plataforma
   
 ```json
 {
-	"_token":"<API_TOKEN>",
-	"medic_id":123
+   "_token":"<API_TOKEN>",
+   "medic_id":123
 }
 ```
 returns => { analyses_request: ANALYSIS_REQUEST [ ] }
@@ -702,7 +702,7 @@ Lista los medicamentos disponibles para ser recetados
 
 ```json
 {
-	"_token":"<API_TOKEN>",
+   "_token":"<API_TOKEN>",
    "search":""
 }
 ```
