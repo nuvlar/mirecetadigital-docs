@@ -42,7 +42,7 @@ Cada petición POST tendrá que contener en su payload un objeto JSON con la sig
 ```
   
 
-A cada una de estas peticiones el servidor responde con un objeto JSON como el siguiente:
+A cada una de estas peticiones el servidor responde con un objeto JSON como el siguiente (la variable live_mode indica si la petición se realizó a una app en modo producción (1) o en modo pruebas (0).:
 
   
 ```json
@@ -50,6 +50,7 @@ A cada una de estas peticiones el servidor responde con un objeto JSON como el s
 	"jsonrpc": "2.0",
 	"id":"<identificador de peticion (arbitrario, generado por cliente)>",
 	"result": {
+      "live_mode":1,
 		"foo":"bar"
 	}
 }
@@ -68,6 +69,14 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 	}
 }
 ```
+
+# Índice
+
+* [Objetos de API](#estructura-de-objetos-de-api)
+* [Llamadas a API](#llamadas-a-api)
+* [Errores devueltos por el API](#errores-devueltos-por-el-api)
+* [Javascript API](#javascript-api)
+
 # Estructura de objetos de API
 
 
