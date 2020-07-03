@@ -6,19 +6,18 @@ Bienvenido a la documentación del API de MiRecetaDigital. Todas las llamadas al
 
 Cada App que utilice el servicio de MRD recibirá uno o más tokens de autenticación. Cada token podrá tener uno o más de los siguientes permisos:
 
-```
-"MANAGE_MEDICS"
-"READ_MEDICS"
-"MANAGE_PATIENTS"
-"READ_PATIENTS"
-"MANAGE_PRESCRIPTIONS"
-"READ_PRESCRIPTIONS"
-"MANAGE_ANALYSIS"
-"READ_ANALYSIS"
-```
+- **MANAGE_MEDICS**: Permite agregar, modificar y listar médicos.
+- **READ_MEDICS**: Permite listar médicos.
+- **MANAGE_PATIENTS**: Permite agregar, modificar y listar pacientes.
+- **READ_PATIENTS**: Permite listar pacientes.
+- **MANAGE_PRESCRIPTIONS**: Permite agregar y listar recetas.
+- **READ_PRESCRIPTIONS**: Permite listar recetas.
+- **MANAGE_ANALYSIS**: Permite agregar y listar solicitudes de análisis.
+- **READ_ANALYSIS**: Permite listar solicitudes de análisis
  
-Los tokens serán generados por parte de MRD y tendrán que ser enviados a través del parámetro _token dentro de cada petición a la API.
+Todas las demás llamadas al API (como listado de medicamentos y análisis) son accesibles por cualquier token sin importar permisos.
 
+Los tokens serán generados por parte de MRD y tendrán que ser enviados a través del parámetro _token dentro de cada petición a la API.
   
 ## CONEXIONES A API
 
@@ -237,7 +236,7 @@ Utiliza esta llamda para agregar un médico a tu app.
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"first_name":"",
 	"last_name":"",
 	"email":"",
@@ -275,7 +274,7 @@ Llamada utilizada para cambiar los datos del médico.
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"medic_id":1234,
 	"first_name":"?",
 	"last_name":"?",
@@ -306,7 +305,7 @@ Llamada para traer la información de un médico desde el API.
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"medic_id":123
 }
 ```
@@ -327,7 +326,7 @@ Lista los médicos en un arreglo.
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
     "search": "search string"
 }
 ```
@@ -354,7 +353,7 @@ Se crea un paciente en la plataforma.
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"first_name":"Juan",
 	"last_name":"Pérez Pérez",
 	"email":"juan@mail.com",
@@ -387,7 +386,7 @@ Edita un paciente
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"patient_id":123,
 	"first_name":"Juan",
 	"last_name":"Pérez Pérez",
@@ -414,7 +413,7 @@ Solicita la información de un paciente
   
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"patient_id":123
 }
 ```
@@ -436,7 +435,7 @@ Lista los pacientes de la app
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"search": "search string"
 }
 ```
@@ -458,7 +457,7 @@ Utiliza esta llamada para decodificar el archivo .key de la e.firma del doctor h
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"key_file":"",
 	"password":""
 }
@@ -485,7 +484,7 @@ Crea un texto con un objeto JSON y un token de autentificación. El objeto JSON 
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"medic_id":123,
 	"patient_id":456,
 	"medicines":[
@@ -519,7 +518,7 @@ Crea una receta a partir del JSON de receta firmado con la librería de Javascri
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"medic_id":123,
 	"patient_id":456,
 	"prescription_json":"JSON string regresado por prescription.createJson",
@@ -545,7 +544,7 @@ Solicita los datos de una receta
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"prescription_id":123
 }
 ```
@@ -567,7 +566,7 @@ Lista las recetas de la app
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"medic_id":123
 }
 ```
@@ -591,7 +590,7 @@ Usado para buscar analisis a poner en solicitudes de laboratorio / gabinete
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"search":"" 
 }
 ```
@@ -618,7 +617,7 @@ Crea una solicitud de análisis, para que un laboratorio o gabinete la realice
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"medic_id":123,
 	"patient_id":456,
 	"analyses":[
@@ -648,7 +647,7 @@ Solicita la información de una solicitud de análisis
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"analyses_request_id":1234
 }
 ```
@@ -670,7 +669,7 @@ Lista las solicitudes de análisis de la plataforma
   
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
 	"medic_id":123
 }
 ```
@@ -691,7 +690,7 @@ Lista los medicamentos disponibles para ser recetados
 
 ```json
 {
-   "_token":"<API_TOKEN>",
+	"_token":"<API_TOKEN>",
    "search":""
 }
 ```
@@ -771,23 +770,28 @@ DICCIONARIO DE ERRORES
 
 # Javascript API
 
-Importa la librería y usar el objeto MRD para firmar las recetas según los siguientes pasos.
+Importa la librería y usa el objeto MRD para firmar las recetas digitales de tus médicos:
 
-Se requiere que el navegador soporte localstorage para el firmado de recetas.
+```html
+<html>
+  <head>
+    <script src="/js/mrd/lib/mrd-js/MRD.min.js"></script>
+  </head>
+</html>
+```
 
-1.  Use una llamada JSONRPC al API prescription.keyToPem para transformar la llave privada (.key) de un médico a formato PEM para poder firmar la receta en su frontend
-2.  Guarde de manera encriptada y segura la llave transformada del médico en localstorage haciendo uso del método MRD.saveKeyFile, estableciendo una contraseña a usar cuando se requiera obtener la llave privada más adelante para firmar una receta. Se recomienda que la contraseña a usar sea especificada por el médico para que el mismo tenga que especificarla de nuevo al firmar una receta.
-3.  Use una llamada JSONRPC al API prescription.createJson con los datos de la receta a crear para obtener un json (prescription_json) y token (prescription_token) de receta estructurado y autorizado.
-4.  Firme el dato prescription_json obtenido del paso anterior usando el método MRD.signPrescription (usando la contraseña establecida en el paso 2) y envíe prescription_json, la firma generada (digital_signature), y prescription_token al API prescription.create según la documentación del API para crear la receta.
-    
 
-  
+Se requiere que el navegador soporte LocalStorage para el firmado de recetas.
+
+1.  Use una llamada JSONRPC al API `prescription.keyToPem` para transformar la llave privada (.key) de un médico a formato PEM para poder firmar la receta en su frontend.
+2.  Guarde de manera encriptada y segura la llave transformada del médico en LocalStorage haciendo uso del método `MRD.saveKeyFile`, estableciendo una contraseña a usar cuando se requiera obtener la llave privada más adelante para firmar una receta. Se recomienda que la contraseña a usar sea especificada por el médico para que el mismo tenga que especificarla de nuevo al firmar una receta.
+3.  Use una llamada JSONRPC al API `prescription.createJson` con los datos de la receta a crear para obtener un json (prescription_json) y token (prescription_token) de receta estructurado y autorizado.
+4.  Firme el dato prescription_json obtenido del paso anterior usando el método `MRD.signPrescription` (usando la contraseña establecida en el paso 2) y envíe prescription_json, la firma generada (digital_signature), y prescription_token al API prescription.create según la documentación del API para crear la receta.
 
 ## Métodos del objeto window.MRD:
 
-  
-
 ### MRD.saveKeyFile(pem, password, callback)
+
 Guarda (con encriptación AES) la llave privada transformada de un médico que se obtuvo mediante la llamada a prescription.keyToPem del API.
 
 Parametros:
@@ -799,7 +803,6 @@ Parametros:
 
 
 ### MRD.signPrescription(stringData, password, callback, errorCallback)
-    
 
 Firma stringData usando el PEM guardado usando el método MRD.saveKeyFile. Requiere usar la misma contraseña que se usó al momento de usar MRD.saveKeyFile.
 
@@ -812,7 +815,6 @@ Parametros:
 |errorCallback|function({int type, stringmessage})|Sí|Cuando ocurre un error, se llama recibiendo un objeto error con las propiedades type y message detallando el error ocurrido|
 
 ### MRD.getKeyFile(password, callback, errorCallback)
-    
 
 Usando para obtener el PEM (original) guardado usando el método MRD.saveKeyFile. Requiere usar la misma contraseña que se usó al momento de usar MRD.saveKeyFile.
 
