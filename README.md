@@ -18,8 +18,18 @@ Cada App que utilice el servicio de MRD recibirá uno o más tokens de autentica
 Todas las demás llamadas al API (como listado de medicamentos y análisis) son accesibles por cualquier token sin importar permisos.
 
 Los tokens serán generados por parte de MRD y tendrán que ser enviados a través del parámetro _token dentro de cada petición a la API.
+
+
+# Índice
+
+* [Conexiones a API](#conexiones-a-api)
+* [Estructura de objetos de API](#estructura-de-objetos-de-api)
+* [Llamadas a API](#llamadas-a-api)
+* [Errores devueltos por el API](#errores-devueltos-por-el-api)
+* [Javascript API](#javascript-api)
+
   
-## CONEXIONES A API
+# Conexiones a API
 
 El API de MRD se puede acceder a través del estándar JSON-RPC a través de peticiones POST al siguiente endpoint:
 
@@ -69,13 +79,6 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 	}
 }
 ```
-
-# Índice
-
-* [Objetos de API](#estructura-de-objetos-de-api)
-* [Llamadas a API](#llamadas-a-api)
-* [Errores devueltos por el API](#errores-devueltos-por-el-api)
-* [Javascript API](#javascript-api)
 
 # Estructura de objetos de API
 
