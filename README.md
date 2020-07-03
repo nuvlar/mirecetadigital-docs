@@ -216,8 +216,28 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ## medic.create
 
+Utiliza esta llamda para agregar un médico a tu app.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|first_name|string|Sí|Nombre o nombres del médico|
+|last_name|string|Sí|Apellidos del médico|
+|email|string|Sí|Dirección de email del médico|
+|license|string|Sí|Número de cédula profesional del médico|
+|institution|string|Sí|Institución que expidió la certificación del médico|
+|speciality|string|Sí|Especialidad (si son varias separar por comas)|
+|work_place|string|Sí|Nombre y dirección de lugar de trabajo (sin estructura definida, aparecerá en las recetas)|
+|work_phone|string|Sí|Teléfono de contacto del médico|
+|public_certificate|string|Sí|String codificado en base64 del archivo .cer de la e.firma del médico|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"first_name":"",
 	"last_name":"",
 	"email":"",
@@ -233,8 +253,29 @@ returns => { medic_id: int, medic: MEDIC }
 
 ## medic.edit
 
+Llamada utilizada para cambiar los datos del médico.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|medic_id|int|Sí|El identificador del médico en MRD|
+|first_name|string|No|Nombre o nombres del médico|
+|last_name|string|No|Apellidos del médico|
+|email|string|No|Dirección de email del médico|
+|license|string|No|Número de cédula profesional del médico|
+|institution|string|No|Institución que expidió la certificación del médico|
+|speciality|string|No|Especialidad (si son varias separar por comas)|
+|work_place|string|No|Nombre y dirección de lugar de trabajo (sin estructura definida, aparecerá en las recetas)|
+|work_phone|string|No|Teléfono de contacto del médico|
+|public_certificate|string|No|String codificado en base64 del archivo .cer de la e.firma del médico|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"medic_id":1234,
 	"first_name":"?",
 	"last_name":"?",
@@ -252,8 +293,20 @@ returns => { medic: MEDIC }
   
 ## medic.get
 
+Llamada para traer la información de un médico desde el API.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|medic_id|int|Sí|Identificador único del médico en MRD|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"medic_id":123
 }
 ```
@@ -261,8 +314,20 @@ returns => { medic: MEDIC }
 
 ## medic.list
 
+Lista los médicos en un arreglo.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|search|string|No|Parámetro de búsqueda de doctor (se buscará en nombre y apellidos). Si no se envía se regresarán todos los doctores de la app |
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
     "search": "search string"
 }
 ```
@@ -271,8 +336,25 @@ returns => { medic: MEDIC }
 
 ## patient.create
 
+Se crea un paciente en la plataforma.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|first_name|string|Sí|Nombre o nombres del paciente|
+|last_name|string|Sí|Apellidos del paciente|
+|email|string|Sí|Dirección de email del paciente|
+|birthdate|string|No|Fecha de nacimiento del paciente (en formato yyyy-mm-dd)|
+|weight|float|No|Peso del paciente en kg|
+|height|float|No|Altura del paciente en cm|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"first_name":"Juan",
 	"last_name":"Pérez Pérez",
 	"email":"juan@mail.com",
@@ -286,8 +368,26 @@ returns => { patient_id: int, patient: PATIENT }
 
 ## patient.edit
 
+Edita un paciente
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|patient_id|int|Sí|Identificador de paceinte en MRD|
+|first_name|string|No|Nombre o nombres del paciente|
+|last_name|string|No|Apellidos del paciente|
+|email|string|No|Dirección de email del paciente|
+|birthdate|string|No|Fecha de nacimiento del paciente (en formato yyyy-mm-dd)|
+|weight|float|No|Peso del paciente en kg|
+|height|float|No|Altura del paciente en cm|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"patient_id":123,
 	"first_name":"Juan",
 	"last_name":"Pérez Pérez",
@@ -300,9 +400,21 @@ returns => { patient_id: int, patient: PATIENT }
 returns => { patient: PATIENT }
 
 ## patient.get
+
+Solicita la información de un paciente
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|patient_id|int|Sí|Identificador de paceinte en MRD|
+
+### Ejemplo de llamada:
   
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"patient_id":123
 }
 ```
@@ -310,26 +422,70 @@ returns => { patient: PATIENT }
 
   
 ## patient.list
+
+Lista los pacientes de la app
+
+### Parámetros
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|search|string|No|Texto a buscar en nombre y apellido|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"search": "search string"
 }
 ```
 returns => { patients: PATIENT [ ] }
 
 ## prescription.keyToPem
+
+Utiliza esta llamada para decodificar el archivo .key de la e.firma del doctor hacia un formato .pem que CryptoJS pueda utilizar. Esta firma nunca se guardará en nuestros servidores.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|key_file|string|Sí|Archivo .key codificado en base64|
+|password|string|Sí|Contraseña de la llave privada .key|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"key_file":"",
-	"password":
+	"password":""
 }
 ```
 returns => { pem: string }
 
 ## prescription.createJson
 
+Crea un texto con un objeto JSON y un token de autentificación. El objeto JSON tendrá que ser firmado por la librería de Javascript de MRD para poder crearse la receta.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|medic_id|int|Sí|El id de MRD del médico que expide la receta|
+|patient_id|int|Sí|El id del paciente que recibe la receta|
+|medicines|object array|Sí|Arreglo de objetos con las siguientes características:|
+|&nbsp;&nbsp;&nbsp;&nbsp;medicine_id|int|Sí|Id del medicamento que se receta|
+|&nbsp;&nbsp;&nbsp;&nbsp;indications|string|Sí|Indicaciones al paciente del medicamento|
+|&nbsp;&nbsp;&nbsp;&nbsp;units|int|Sí|Cantidad de unidades del medicamento a surtir|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"medic_id":123,
 	"patient_id":456,
 	"medicines":[
@@ -346,8 +502,24 @@ returns => { prescription_json: string, prescription_token: string }
 
 ## prescription.create
 
+Crea una receta a partir del JSON de receta firmado con la librería de Javascript
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|medic_id|int|Sí|El id del médico que expide la receta|
+|patient_id|int|Sí|El id del paciente que recibe la receta|
+|prescription_json|string|Sí|El objeto JSON recibido de la llamada `prescription.createJson`|
+|digital_signature|string|Sí|La firma digital arrojada por la librería de Javascript sobre el objeto JSON|
+|prescription_token|string|Sí|El token recibido de la llamada `prescription.createJson`|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"medic_id":123,
 	"patient_id":456,
 	"prescription_json":"JSON string regresado por prescription.createJson",
@@ -360,8 +532,20 @@ returns => { prescription_id: int, prescription: PRESCRIPTION }
 
 ## prescription.get
 
+Solicita los datos de una receta
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|prescription_id|int|Sí|El id de la receta a solicitar|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"prescription_id":123
 }
 ```
@@ -370,21 +554,44 @@ returns => { prescription_id: int, prescription: PRESCRIPTION }
 
 ## prescription.list
 
+Lista las recetas de la app
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|medic_id|int|No|Si se envía este parámetro se regresarán las recetas emitidas por el médico en cuestión|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"medic_id":123
 }
 ```
 
 returns => { prescriptions: PRESCRIPTION [ ] }
-
   
 ## analysis.list
+
+Lista los tipos de análisis que se pueden utilizar para crear una solicitud de análisis
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|search|string|No|Se filtran los análisis por nombre|
+
+### Ejemplo de llamada:
 
 Usado para buscar analisis a poner en solicitudes de laboratorio / gabinete
 
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"search":"" 
 }
 ```
@@ -392,8 +599,26 @@ returns => { analyses: ANALYSIS [ ] }
 
 ## analysisRequest.create
 
+Crea una solicitud de análisis, para que un laboratorio o gabinete la realice
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|medic_id|int|Sí|El médico que expide la solicitud de análisis|
+|patient_id|int|Sí|El paciente al que se solicita el análisis|
+|analyses|object array|Sí|Arreglo de objetos con los análisis requeridos. Contiene los siguientes parámetros:|
+|&nbsp;&nbsp;&nbsp;&nbsp;id|int|Sí|El id de análisis regresado por `analysis.list`|
+|&nbsp;&nbsp;&nbsp;&nbsp;observations|string|No|Observaciones de análisis, para los especialistas del laboratorio|
+|&nbsp;&nbsp;&nbsp;&nbsp;motives|string|No|Motivos clínicos para realizar el análisis|
+|&nbsp;&nbsp;&nbsp;&nbsp;indications|string|No|Indicaciones para el paciente.|
+
+### Ejemplo de llamada
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"medic_id":123,
 	"patient_id":456,
 	"analyses":[
@@ -410,8 +635,20 @@ returns => { analysis_request_id: int, analysis_request: ANALYSIS_REQUEST }
 
 ## analysisRequest.get
 
+Solicita la información de una solicitud de análisis
+
+### Parámetros
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|analyses_request_id|int|Sí|El id de la solicitud de análisis|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"analyses_request_id":1234
 }
 ```
@@ -419,9 +656,21 @@ returns => { analysis_request_id: int, analysis_request: ANALYSIS_REQUEST }
 returns => { analysis_request: ANALYSIS_REQUEST }
 
 ## analysisRequest.list
+
+Lista las solicitudes de análisis de la plataforma
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|medic_id|int|No|Si se envía este parámetro se regresarán las solicitudes emitidas por el médico en cuestión|
+
+### Ejemplo de llamada:
   
 ```json
 {
+   "_token":"<API_TOKEN>",
 	"medic_id":123
 }
 ```
@@ -429,8 +678,20 @@ returns => { analyses_request: ANALYSIS_REQUEST [ ] }
 
 ## medicine.list
 
+Lista los medicamentos disponibles para ser recetados
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|search|string|No|Se filtran los medicamentos por nombre|
+
+### Ejemplo de llamada:
+
 ```json
 {
+   "_token":"<API_TOKEN>",
    "search":""
 }
 ```
