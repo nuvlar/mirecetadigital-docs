@@ -333,6 +333,7 @@ Lista los médicos en un arreglo.
 |--|--|--|--|
 |_token|string|Sí|El token de acceso de tu app|
 |search|string|No|Parámetro de búsqueda de doctor (se buscará en nombre y apellidos). Si no se envía se regresarán todos los doctores de la app |
+|page|int|No|Parámetro de paginado, comienza en `0`. Si no se envía se enviará la primera página. La candidad de resultados por página es 20|
 
 ### Ejemplo de llamada:
 
@@ -442,6 +443,7 @@ Lista los pacientes de la app
 |--|--|--|--|
 |_token|string|Sí|El token de acceso de tu app|
 |search|string|No|Texto a buscar en nombre y apellido|
+|page|int|No|Parámetro de paginado, comienza en `0`. Si no se envía se enviará la primera página. La candidad de resultados por página es 50|
 
 ### Ejemplo de llamada:
 
@@ -573,6 +575,8 @@ Lista las recetas de la app
 |--|--|--|--|
 |_token|string|Sí|El token de acceso de tu app|
 |medic_id|int|No|Si se envía este parámetro se regresarán las recetas emitidas por el médico en cuestión|
+|patient_id|int|No|Si se envía este parámetro se regresarán las recetas emitidas para el paciente en cuestión|
+|page|int|No|Parámetro de paginado, comienza en `0`. Si no se envía se enviará la primera página. La candidad de resultados por página es 20|
 
 ### Ejemplo de llamada:
 
@@ -595,6 +599,7 @@ Lista los tipos de análisis que se pueden utilizar para crear una solicitud de 
 |--|--|--|--|
 |_token|string|Sí|El token de acceso de tu app|
 |search|string|No|Se filtran los análisis por nombre|
+|page|int|No|Parámetro de paginado, comienza en `0`. Si no se envía se enviará la primera página. La candidad de resultados por página es 50|
 
 ### Ejemplo de llamada:
 
@@ -676,6 +681,8 @@ Lista las solicitudes de análisis de la plataforma
 |--|--|--|--|
 |_token|string|Sí|El token de acceso de tu app|
 |medic_id|int|No|Si se envía este parámetro se regresarán las solicitudes emitidas por el médico en cuestión|
+|patient_id|int|No|Si se envía este parámetro se regresarán las solicitudes emitidas para el paciente en cuestión|
+|page|int|No|Parámetro de paginado, comienza en `0`. Si no se envía se enviará la primera página. La candidad de resultados por página es 20|
 
 ### Ejemplo de llamada:
   
@@ -697,6 +704,7 @@ Lista los medicamentos disponibles para ser recetados
 |--|--|--|--|
 |_token|string|Sí|El token de acceso de tu app|
 |search|string|No|Se filtran los medicamentos por nombre|
+|page|int|No|Parámetro de paginado, comienza en `0`. Si no se envía se enviará la primera página. La candidad de resultados por página es 20|
 
 ### Ejemplo de llamada:
 
