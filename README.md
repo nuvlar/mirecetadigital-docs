@@ -123,6 +123,8 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 ```json
 {
    "live_mode":1,
+   "id":99,
+   "prescription_id":99,
    "medic_id":1231,
    "patient_id":1232,
    "medic":"{object medic}",
