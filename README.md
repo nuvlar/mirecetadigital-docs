@@ -225,6 +225,41 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 }
 ```
 
+## PHARMACY 
+
+```json
+{
+	"id": 123,
+	"id_pharmacy": 123,
+	"name": "My Pharma",
+	"logo": "http://example.com/pharmacy_logo.png"
+}
+```
+## PHARMACY_LOCATION_PHYSICAL
+
+```json
+{
+
+	"id": 123,
+	"id_location": 123,
+	"name": "Old Pharma",
+	"latitude": 25.0,
+	"longitude": -71.0,
+	"address": "Street #123, ZIP State, Country"
+}
+```
+
+## PHARMACY_LOCATION_VIRTUAL
+
+```json
+{
+	"id": 123,
+	"id_location": 123,
+	"name": "Virtual Pharma",
+	"website": "http://www.example.com"
+}
+```
+
 # Llamadas a API
 
 ## medic.create
@@ -717,6 +752,50 @@ Lista los medicamentos disponibles para ser recetados
 }
 ```
 returns => { medicines: MEDICINE [ ] }
+
+## pharmacy.list  
+
+Lista las farmacias en las que se pueden surtir medicamentos que requieren receta
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+
+### Ejemplo de llamada:
+
+```json
+{
+   "_token":"<API_TOKEN>"
+}
+
+```
+
+returns => { pharmacies: PHARMACY [ ] }
+
+## pharmacy.locations
+
+Lista las sucursales virtuales (sitios web) y físicas de una farmacias
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|id_pharmacy|integer|Sí|Mostrar las sucursales de una farmacia|
+
+### Ejemplo de llamada:
+
+```json
+{
+	"_token":"<API_TOKEN>",
+	"id_pharmacy": 123
+}
+
+```
+
+returns => { virtual: PHARMACY_LOCATION_PHYSICAL [ ], physical: PHARMACY_LOCATION_PHYSICAL [ ] }
 
 # Errores devueltos por el API
 
