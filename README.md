@@ -548,7 +548,7 @@ Crea un texto con un objeto JSON y un token de autentificación. El objeto JSON 
 }
 ``` 
 
-returns => { prescription_json: string, prescription_token: string }
+returns => { unsigned_payload: string, unsigned_payload_token: string }
 
 ## prescription.create
 
@@ -561,9 +561,8 @@ Crea una receta a partir del JSON de receta firmado con la librería de Javascri
 |_token|string|Sí|El token de acceso de tu app|
 |medic_id|int|Sí|El id del médico que expide la receta|
 |patient_id|int|Sí|El id del paciente que recibe la receta|
-|prescription_json|string|Sí|El objeto JSON recibido de la llamada `prescription.createJson`|
+|unsigned_payload_token|string|Sí|El token recibido de la llamada `prescription.createJson`|
 |digital_signature|string|Sí|La firma digital arrojada por la librería de Javascript sobre el objeto JSON|
-|prescription_token|string|Sí|El token recibido de la llamada `prescription.createJson`|
 
 ### Ejemplo de llamada:
 
@@ -572,9 +571,8 @@ Crea una receta a partir del JSON de receta firmado con la librería de Javascri
    "_token":"<API_TOKEN>",
    "medic_id":123,
    "patient_id":456,
-   "prescription_json":"JSON string regresado por prescription.createJson",
-   "digital_signature":"Firma calculada con la librería de JS y la llave privada del doctor.",
-   "prescription_token":"Token regresado por prescription.createJson"
+   "unsigned_payload_token":"Token regresado por prescription.createJson",
+   "digital_signature":"Firma calculada con la librería de JS y la llave privada del doctor."
 }
 ```
   
@@ -910,7 +908,7 @@ Firma stringData usando el PEM guardado usando el método MRD.saveKeyFile. Requi
 Parametros:
 |Nombre|Tipo|Requerido|Explicación|
 |--|--|--|--|
-|stringData|string|Sí|String a firmar (json de receta como se recibió)|
+|stringData|string|Sí|String a firmar (Cadena unsigned_payload como se recibió)|
 |password|string|Sí|Contraseña de encriptación usada anteriormente|
 |callback|function(signedStringData)|Sí|Recibe el stringData firmado|
 |errorCallback|function({int type, stringmessage})|Sí|Cuando ocurre un error, se llama recibiendo un objeto error con las propiedades type y message detallando el error ocurrido|
