@@ -182,6 +182,7 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ```json
 {
+   "live_mode":1,
    "id":123,
    "analyses_request_id":123,
    "medic_id":1231,
