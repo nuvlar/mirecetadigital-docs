@@ -136,6 +136,7 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
    "qr_hash":"SKHRUEK12372SHA",
    "digital_signature":"{hash de firma digital}",
    "json":"{objeto json firmado con datos de receta}",
+   "prescription_url" : "{URL para poder ver los detalles de una receta dentro de MRD}",
    "medicines":[
       {
          "id":123,
