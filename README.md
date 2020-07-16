@@ -16,7 +16,7 @@ MiRecetaDigital (MRD) es un sistema cuyo objetivo principal es la creación y va
 * [Llamadas a API](#llamadas-a-api)
 * [Errores devueltos por el API](#errores-devueltos-por-el-api)
 * [Javascript API](#javascript-api)
-* [Estándar de recetas digitales](#estandar-de-recetas-digitales)
+* [Estándar de recetas digitales](#estándar-de-recetas-digitales)
 
 # Tokens de API
 
@@ -900,7 +900,16 @@ Se requiere que el navegador soporte LocalStorage para el firmado de recetas.
 
 ## Métodos del objeto window.MRD:
 
+### MRD.getBase64File(inputElementID, callback, errorCallback)
 
+Codifica los datos de un elemento input en un string base64 para poder utilizarse en el método `MRD.saveKeyFile`.
+
+Parámetros:
+|Nombre|Tipo|Requerido|Explicación|
+|--|--|--|--|
+|inputElementID|string|Sí|Identificador del elemento input desde el cual se extraerá el archivo de llave.|
+|callback|function(signedStringData)|Sí|Recibe archivo seleccionado en el input como un string base64|
+|errorCallback|function({int type, string message})|Sí|Cuando ocurre un error, se llama recibiendo un objeto error con las propiedades type y message detallando el error ocurrido|
 
 ### MRD.saveKeyFile(base64DERFile, callback)
 
@@ -910,7 +919,7 @@ Parametros:
 |Nombre|Tipo|Requerido|Explicación|
 |--|--|--|--|
 |base64DERFile|string|Sí|String en base64 del archivo DER del médico.|
-|callback|function(encryptedPem)|Sí|Función invocada una vez que se termina el proceso de guardado, recibe el string con el pem encriptado. |
+|callback|function()|Sí|Función invocada una vez que se termina el proceso de guardado. |
 
 
 ### MRD.signPrescription(stringData, password, callback, errorCallback)
@@ -922,8 +931,8 @@ Parametros:
 |--|--|--|--|
 |stringData|string|Sí|String a firmar (Cadena unsigned_payload como se recibió)|
 |password|string|Sí|Contraseña de la llave privada del médico|
-|callback|function(signedStringData)|Sí|Recibe el stringData firmado|
-|errorCallback|function({int type, stringmessage})|Sí|Cuando ocurre un error, se llama recibiendo un objeto error con las propiedades type y message detallando el error ocurrido|
+|callback|function(string JWT)|Sí|Recibe un string con el objeto JWT firmado de la receta|
+|errorCallback|function({int type, string message})|Sí|Cuando ocurre un error, se llama recibiendo un objeto error con las propiedades type y message detallando el error ocurrido|
 
 ### MRD.getKeyFile(password, callback, errorCallback)
 
