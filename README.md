@@ -3,6 +3,22 @@
 
 Bienvenido a la documentación del API de MiRecetaDigital. Todas las llamadas al API requieren la presencia de un token de autentificación generado por nosotros. Si deseas implementar los servicios de MiRecetaDigital en tu sitio web puedes contactarnos a `direccion@mirecetadigital.com`.
 
+## Introducción a MRD
+
+MiRecetaDigital (MRD) es un sistema cuyo objetivo principal es la creación y validación de documentos médicos (Recetas y solicitudes de análisis) en México. El sistema cumple con las regulaciones nacionales de firma digital para recetas médicas utilizando la e.firma del Servicio de Administración Tributaria (SAT) de México. Las recetas digitales, además de almacenarse en nuestros servidores de manera convencional, son firmadas utilizando la llave privada del médico mediante el estándar JSON Web Token RS256 y pueden ser validadas sin que la parte verificadora necesite confiar en los servidores de MRD. 
+
+
+# Índice
+
+* [Tokens de API](#tokens-de-api)
+* [Conexiones a API](#conexiones-a-api)
+* [Estructura de objetos de API](#estructura-de-objetos-de-api)
+* [Llamadas a API](#llamadas-a-api)
+* [Errores devueltos por el API](#errores-devueltos-por-el-api)
+* [Javascript API](#javascript-api)
+* [Estándar de recetas digitales](#estandar-de-recetas-digitales)
+
+# Tokens de API
 
 Cada App que utilice el servicio de MRD recibirá uno o más tokens de autenticación. Cada token podrá tener uno o más de los siguientes permisos:
 
@@ -18,15 +34,6 @@ Cada App que utilice el servicio de MRD recibirá uno o más tokens de autentica
 Todas las demás llamadas al API (como listado de medicamentos y análisis) son accesibles por cualquier token sin importar permisos.
 
 Los tokens serán generados por parte de MRD y tendrán que ser enviados a través del parámetro _token dentro de cada petición a la API.
-
-
-# Índice
-
-* [Conexiones a API](#conexiones-a-api)
-* [Estructura de objetos de API](#estructura-de-objetos-de-api)
-* [Llamadas a API](#llamadas-a-api)
-* [Errores devueltos por el API](#errores-devueltos-por-el-api)
-* [Javascript API](#javascript-api)
 
   
 # Conexiones a API
@@ -494,9 +501,11 @@ Lista los pacientes de la app
 ```
 returns => { patients: PATIENT [ ] }
 
-## prescription.keyToPem
+## prescription.keyToPem (Obsoleto)
 
-Utiliza esta llamada para decodificar el archivo .key de la e.firma del doctor hacia un formato .pem que CryptoJS pueda utilizar. Esta firma nunca se guardará en nuestros servidores.
+Utiliza esta llamada para decodificar el archivo .key de la e.firma del doctor hacia un formato .pem que la librería de javascript de mrd pueda utilizar. Esta firma nunca se guardará en nuestros servidores.
+
+ *AVISO: Ya no es necesario que la llave privada del doctor llegue a nuestros servidores nunca.La librería Javascript ya soporta procesar el archivo DER de la llave privada del médico manualmente.*
 
 ### Parámetros:
 
@@ -519,7 +528,7 @@ returns => { pem: string }
 
 ## prescription.createJson
 
-Crea un texto con un objeto JSON y un token de autentificación. El objeto JSON tendrá que ser firmado por la librería de Javascript de MRD para poder crearse la receta.
+Crea un texto con un payload JSON en base64url compatible con el estándar JSON Web Token y un token de validación para ese payload. El Payload tendrá que ser firmado por la librería de Javascript de MRD (el firmado utiliza el estándar JWT RS256) para poder crearse la receta mediante la llamada `prescription.create`.
 
 ### Parámetros:
 
@@ -564,7 +573,7 @@ Crea una receta a partir del JSON de receta firmado con la librería de Javascri
 |medic_id|int|Sí|El id del médico que expide la receta|
 |patient_id|int|Sí|El id del paciente que recibe la receta|
 |unsigned_payload_token|string|Sí|El token recibido de la llamada `prescription.createJson`|
-|digital_signature|string|Sí|La firma digital arrojada por la librería de Javascript sobre el objeto JSON|
+|digital_signature|string|Sí|La firma digital (JSON Web Token RS256) arrojada por la librería de Javascript sobre el payload|
 
 ### Ejemplo de llamada:
 
@@ -884,34 +893,35 @@ Importa la librería y usa el objeto MRD para firmar las recetas digitales de tu
 
 Se requiere que el navegador soporte LocalStorage para el firmado de recetas.
 
-1.  Use una llamada JSONRPC al API `prescription.keyToPem` para transformar la llave privada (.key) de un médico a formato PEM para poder firmar la receta en su frontend.
-2.  Guarde de manera encriptada y segura la llave transformada del médico en LocalStorage haciendo uso del método `MRD.saveKeyFile`, estableciendo una contraseña a usar cuando se requiera obtener la llave privada más adelante para firmar una receta. Se recomienda que la contraseña a usar sea especificada por el médico para que el mismo tenga que especificarla de nuevo al firmar una receta.
-3.  Use una llamada JSONRPC al API `prescription.createJson` con los datos de la receta a crear para obtener un json (prescription_json) y token (prescription_token) de receta estructurado y autorizado.
-4.  Firme el dato prescription_json obtenido del paso anterior usando el método `MRD.signPrescription` (usando la contraseña establecida en el paso 2) y envíe prescription_json, la firma generada (digital_signature), y prescription_token al API prescription.create según la documentación del API para crear la receta.
+1.  Solicita el documento `.key` de los médicos (la llave privada de su e.firma) y lee el archivo como base64 con la llamada `MRD.getBase64File`.
+2.  Guarda la llave del médico en LocalStorage haciendo uso del método `MRD.saveKeyFile`.
+3.  Usa una llamada JSONRPC al API `prescription.createJson` con los datos de la receta a crear para obtener un json (unsigned_payload) y token (unsigned_payload_token) de receta estructurado y autorizado.
+4.  Firma el dato `unsigned_payload` obtenido del paso anterior usando el método `MRD.signPrescription` (usando la contraseña de la llave privada del médico) la firma generada (digital_signature), y unsigned_payload_token al API prescription.create según la documentación del API para crear la receta.
 
 ## Métodos del objeto window.MRD:
 
-### MRD.saveKeyFile(pem, password, callback)
 
-Guarda (con encriptación AES) la llave privada transformada de un médico que se obtuvo mediante la llamada a prescription.keyToPem del API.
+
+### MRD.saveKeyFile(base64DERFile, callback)
+
+Guarda la llave privada del médico en memoria local.
 
 Parametros:
 |Nombre|Tipo|Requerido|Explicación|
 |--|--|--|--|
-|pem|string|Sí|String de llave privada del doctor.|
-|password|string|Sí|Contraseña con la que se encriptará la llave privada en el almacenamiento local.|
+|base64DERFile|string|Sí|String en base64 del archivo DER del médico.|
 |callback|function(encryptedPem)|Sí|Función invocada una vez que se termina el proceso de guardado, recibe el string con el pem encriptado. |
 
 
 ### MRD.signPrescription(stringData, password, callback, errorCallback)
 
-Firma stringData usando el PEM guardado usando el método MRD.saveKeyFile. Requiere usar la misma contraseña que se usó al momento de usar MRD.saveKeyFile.
+Firma stringData usando el archivo guardado usando el método MRD.saveKeyFile.
 
 Parametros:
 |Nombre|Tipo|Requerido|Explicación|
 |--|--|--|--|
 |stringData|string|Sí|String a firmar (Cadena unsigned_payload como se recibió)|
-|password|string|Sí|Contraseña de encriptación usada anteriormente|
+|password|string|Sí|Contraseña de la llave privada del médico|
 |callback|function(signedStringData)|Sí|Recibe el stringData firmado|
 |errorCallback|function({int type, stringmessage})|Sí|Cuando ocurre un error, se llama recibiendo un objeto error con las propiedades type y message detallando el error ocurrido|
 
@@ -930,3 +940,62 @@ Parametros:
 
 
 
+# Estándar de recetas digitales
+
+Las recetas de MRD se firman por medio del estándar JSON Web Token ([RFC 7519](https://tools.ietf.org/html/rfc7519)) con el algoritmo de firmado RSA256 del estándar JSON Web Signature ([RFC 7515](https://tools.ietf.org/html/rfc7515)). La llave privada utilizada para firmar la receta digital tiene que ser una llave expedida por el Servicio de Administración Tributaria de México (SAT) bajo el estándar [e.firma](https://www.gob.mx/efirma).
+
+La estructura de recetas utilizada es un estándar abierto agnóstico a plataformas creado por MiRecetaDigital. Cualquier entidad puede expedir recetas que se ajusten a este estándar.
+
+## Estructura de payload JSON Web Token de recetas (Ver. 0.1)
+
+El payload de las recetas deben de tener la siguiente estructura
+
+|Campo|Tipo|Requerido|Explicación|
+|--|--|--|--|
+|prv|string|Sí|Identifica la versión de estándar bajo la cual se emitió la receta (Actual: "MRD-0.1")|
+|jti|string|No|El identificador único de la receta. Debe de contener la suficiente información para que las posibilidades de duplicarse (incluso entre plataformas expedidoras) sea mínima|
+|iss|string|No|El identificador de la entidad (empresa o sistema) que generó la receta.|
+|exp|int (unixtime)|No|El momento en el tiempo a partir del cual la receta será inválida|
+|nbf|int (unixtime)|No|El momento en el tiempo a partir del cual la receta será válida|
+|env|string|Sí|El ambiente en el que se emite la receta (puede ser "dist" para distribución o "dev" para pruebas). Las farmacias sólamente aceptarán las recetas emitidas en ambiente "dist"|
+|med|object|Sí|Los datos del médico que emite la receta|
+|&nbsp;&nbsp;&nbsp;&nbsp;uid|string|No|El identificador interno del médico (en la plataforma emisora de la receta).|
+|&nbsp;&nbsp;&nbsp;&nbsp;nom|string|Sí|El nombre del médico que emite la receta|
+|&nbsp;&nbsp;&nbsp;&nbsp;crs|string|Sí|El número serial en hexadecimal del certificado público del médico (archivo .cer emitido por el SAT)|
+|&nbsp;&nbsp;&nbsp;&nbsp;cdp|int|Sí|Número de cédula profesional del médico emitida por la SEP|
+|&nbsp;&nbsp;&nbsp;&nbsp;esp|string|Sí|Especialidad del médico|
+|&nbsp;&nbsp;&nbsp;&nbsp;inc|string|Sí|Institución certificadora del médico (escuela que emite el título)|
+|&nbsp;&nbsp;&nbsp;&nbsp;ltr|string|Sí|Lugar y dirección del consultorio|
+|&nbsp;&nbsp;&nbsp;&nbsp;tel|string|Sí|Número telefónico del médico|
+|pac|object|Sí|Los datos del paciente al cual es dirigida la receta|
+|&nbsp;&nbsp;&nbsp;&nbsp;uid|string|No|El identificador interno del paciente (en la plataforma emisora de la receta).|
+|&nbsp;&nbsp;&nbsp;&nbsp;nom|string|Sí|Nombre del paciente al cual es dirigida la receta|
+|&nbsp;&nbsp;&nbsp;&nbsp;pes|float|No|Peso(en kg) del paciente|
+|&nbsp;&nbsp;&nbsp;&nbsp;alt|float|No|Altura (en cm) del paciente|
+|&nbsp;&nbsp;&nbsp;&nbsp;edd|int|No|Edad (en años) del paciente|
+|&nbsp;&nbsp;&nbsp;&nbsp;dia|string|No|Diagnóstico del paciente|
+|&nbsp;&nbsp;&nbsp;&nbsp;par|string|No|Presión arterial del paciente|
+|&nbsp;&nbsp;&nbsp;&nbsp;tmp|float|No|Temperatura (en centígrados) del paciente|
+|trt|object array|Sí|El tratamiento (medicamentos) que el paciente necesita|
+|&nbsp;&nbsp;&nbsp;&nbsp;uid|string|No|El identificador interno del medicamento (en la plataforma emisora de la receta).|
+|&nbsp;&nbsp;&nbsp;&nbsp;nom|string|Sí|Nombre, ingredientes y presentación del medicamento|
+|&nbsp;&nbsp;&nbsp;&nbsp;ind|string|Sí|Indicaciones del tratamiento|
+|&nbsp;&nbsp;&nbsp;&nbsp;uni|int|No|Cantidad de unidades del medicamento que se recetan|
+|&nbsp;&nbsp;&nbsp;&nbsp;sku|string|No|Número interno de almacén del medicamento|
+|&nbsp;&nbsp;&nbsp;&nbsp;upc|string|No|Número identificador universal del medicamento (GS1)|
+
+## Validación de recetas sin relación de confianza
+
+Las recetas emitidas con el estándar de MRD no requieren una relación de confianza entre las farmacias y MiRecetaDigital. Cada receta digital contiene dentro de sí misma los métodos para verificar su veracidad y validez.
+
+Los pasos para validar una receta con el estándar MRD-0.1 son los siguientes:
+
+
+1. Extraer información del payload del JWT. Esto se logra decodificando el payload (la sección del JWT comprendida entre dos puntos (.)) mediante el estándar [Base64URL](https://base64.guru/standards/base64url) y después interpretándolo como una cadena en formato JSON.
+2. Obtener el número de serie del certificado digital del médico (el campo `med.crs`).
+3. Solicitar al API del SAT el certificado del médico (en la url `https://apisnet.col.gob.mx/wsSignGob/apiV1/Obtener/Certificado?serial=<elnumeroserialdelmedico>`).
+4. Verificar que los datos del certificado coincidan con los datos del médico (su cédula profesional se encuentra en el campo `med.cdp`).
+5. Validar el JWT de la receta mediante el estándar JWT y el algoritmo RS256.
+6. Validar que el campo `env` de la receta sea igual a "dist".
+
+Una vez que estos pasos están completados puedes proceder a surtir la receta. Si la receta no contiene medicamentos no controlados puedes solamente utilizar el paso 1 y surtir la receta.
