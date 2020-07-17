@@ -985,7 +985,7 @@ El payload de las recetas deben de tener la siguiente estructura
 |&nbsp;&nbsp;&nbsp;&nbsp;alt|float|No|Altura (en cm) del paciente|
 |&nbsp;&nbsp;&nbsp;&nbsp;edd|int|No|Edad (en años) del paciente|
 |&nbsp;&nbsp;&nbsp;&nbsp;dia|string|No|Diagnóstico del paciente|
-|&nbsp;&nbsp;&nbsp;&nbsp;par|string|No|Presión arterial del paciente|
+|&nbsp;&nbsp;&nbsp;&nbsp;par|string|No|Presión arterial del paciente (mmHg)|
 |&nbsp;&nbsp;&nbsp;&nbsp;tmp|float|No|Temperatura (en centígrados) del paciente|
 |trt|object array|Sí|El tratamiento (medicamentos) que el paciente necesita|
 |&nbsp;&nbsp;&nbsp;&nbsp;uid|string|No|El identificador interno del medicamento (en la plataforma emisora de la receta).|
@@ -1056,4 +1056,4 @@ Los pasos para validar una receta con el estándar MRD-0.1 son los siguientes:
 5. Validar el JWT de la receta mediante el estándar JWT y el algoritmo RS256.
 6. Validar que el campo `env` de la receta sea igual a "dist".
 
-Una vez que estos pasos están completados puedes proceder a surtir la receta. Si la receta no contiene medicamentos no controlados puedes solamente utilizar el paso 1 y surtir la receta.
+Una vez que estos pasos están completados puedes proceder a surtir la receta. Si la receta no contiene medicamentos controlados puedes solamente utilizar el paso 1 y surtir la receta.
