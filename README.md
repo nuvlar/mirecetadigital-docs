@@ -964,7 +964,7 @@ El payload de las recetas deben de tener la siguiente estructura
 |Campo|Tipo|Requerido|Explicación|
 |--|--|--|--|
 |prv|string|Sí|Identifica la versión de estándar bajo la cual se emitió la receta (Actual: "MRD-0.1")|
-|jti|string|No|El identificador único de la receta. Debe de contener la suficiente información para que las posibilidades de duplicarse (incluso entre plataformas expedidoras) sea mínima|
+|jti|string|Sí|El identificador único de la receta. Debe de contener la suficiente información para que las posibilidades de duplicarse (incluso entre plataformas expedidoras) sea mínima|
 |iss|string|No|El identificador de la entidad (empresa o sistema) que generó la receta.|
 |exp|int (unixtime)|No|El momento en el tiempo a partir del cual la receta será inválida|
 |nbf|int (unixtime)|No|El momento en el tiempo a partir del cual la receta será válida|
@@ -1057,3 +1057,36 @@ Los pasos para validar una receta con el estándar MRD-0.1 son los siguientes:
 6. Validar que el campo `env` de la receta sea igual a "dist".
 
 Una vez que estos pasos están completados puedes proceder a surtir la receta. Si la receta no contiene medicamentos controlados puedes solamente utilizar el paso 1 y surtir la receta.
+
+## Propuesta para evitar doble gasto:
+
+Uno de los problemas de las recetas digitales es es hecho de requerir que no se pueda realizar un "doble gasto" de ésta; es decir, que un paciente no pueda surtir la misma receta dos veces.
+
+Se propone implementar un sistema basado en la tecnología [IPFS](https://ipfs.io/) y [Orbitdb](https://orbitdb.org/) para manejar una base de datos distribuida sencilla con las recetas surtidas por cada farmacia. De esta manera los actores interesados podrían suscribirse a las bases de datos de cada farmacia y ver un registro de las recetas que se han surtido en cada una de ellas. Estas bases de datos serían públicas y descentralizadas, para aumentar la confiabilidad y requerir en la menor cantidad de un órgano central regulador.
+
+Se propone un sistema de bases de datos con esquema key-value, en el cual se almacenen de manera muy sencilla valores que no expongan datos personales del paciente, doctor y contenidos de la receta. Los valores de las bases de datos podrían tener la siguiente estructura:
+
+1. La llave de la entrada (key) sería una amalgamación de el identificador de la receta (jti) y el hash sha256 del contenido total del JWT, separados por un guión.
+2. El valor (value) de la entrada consistiría de un arreglo de entradas estructuradas de la siguiente manera (estos valores estarían unidos con un guión):
+   * El índice del medicamento surtido (de acuerdo al arreglo en el parámetro `trt` de la receta).
+   * La cantidad de veces que el medicamento fue surtido.
+
+Un ejemplo de una entrada a las bases de datos podría ser esta:
+
+```json
+{
+   "54-1871-1594936610-b12c031ec4ae2ef38bf14decdc85be9ff9bf4160f88a2bfdbebb4e8ba03d56dd":"0-1,1-2"
+}
+```
+Esta entrada indicaría que a la receta `54-1871-1594936610` se le surtió el primer medicamento en una unidad y el segundo en dos unidades.
+
+Esta manera de compartición de datos asegura los siguientes puntos:
+
+* Ninguna información personal puede deducirse de las entradas de la base de datos pública.
+* La única manera de saber qué medicamentos se han surtido de la receta es tener a la receta físicamente para poder correr el algoritmo sha-256 sobre ella y averiguar su llave. 
+* El carácter distribuido de la base de datos permite redundancia de datos y resistencia a fallos, al cada parte tener una copia de las bases de datos de las demás partes.
+* No se requiere la centralización de datos en una entidad reguladora.
+
+### ¿Por qué no blockchain?
+
+El sistema de archivos IPFS es en sí una tecnología P2P con criptografía de árbol de Merkle, solamente que los datos no se almacenan en bloques, por lo que no hay que esperar a que un bloque se mine para poder insertar los datos. Esto elimina complejidad a la base de datos y permite insertar valores en tiempo real.
