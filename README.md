@@ -634,7 +634,29 @@ Lista las recetas de la app
 ```
 
 returns => { prescriptions: PRESCRIPTION [ ] }
-  
+
+## prescription.validateJWT
+
+Verificar que el JWT de una receta cualquiera en estandard MRD-0.1 o superior este correctamente formado y firmado por el médico que se menciona en la receta.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|jwt|string|Sí|JWT de una receta creada usando el estandard "MRD-0.1" o superior. (En recetas creadas mediante este API, digital_signature de un objeto PRESCRIPTION)|
+
+### Ejemplo de llamada:
+
+```json
+{
+   "_token":"<API_TOKEN>",
+   "jwt":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9......"
+}
+```
+
+returns => { valid: boolean, payload: RECETA_STANDARD_MRD-0.X, public_certificate_url: string, public_certificate_pem: string }
+
 ## analysis.list
 
 Lista los tipos de análisis que se pueden utilizar para crear una solicitud de análisis
