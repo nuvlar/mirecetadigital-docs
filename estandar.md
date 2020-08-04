@@ -189,7 +189,7 @@ Este diccionario se utiliza en cualquier lugar en el que se requiera definir una
 |vag|Vaginal|
 |ung|Ungeal|
 |noa|N/A|
-|orl|Oral/Vaginal|
+|orv|Oral/Vaginal|
 |otr|Otra|
 
 
