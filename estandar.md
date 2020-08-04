@@ -69,6 +69,22 @@ El payload de las recetas deben de tener la siguiente estructura
 |trt\[\].ing\[\].med|string|No|Medida por unidad (por tableta, gota, etc) (según diccionario de medida de ingredientes FIDE-MED-1)|
 |trt\[\].ing\[\].can|float|No|Cantidad del compuesto (ejemplo: 500 para indicar 500mg)|
 
+## Estructura de QR
+
+Los QR de recetas digitales FIDE son autocontenidos, y toda la receta puede incluirse en un solo código QR. EL código QR debe de comenzar con las letras `FIDE:` seguidas de la cadena JWT de la receta para poder ser interpretado por los lectores de QR de las farmacias.
+
+```
+FIDE:eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcnYiOiJNUkQtMC4xIiwianRpIjoiNTQtMTg3MS0xNTk0OTM2NjEwIiwiaWF0IjoxNTk0OTM2NjEwLCJpc3MiOiJNUkQiLCJtZWQiOnsidWlkIjo1NCwiY3JzIjoiMzAzMDMwMzAzODMxMzAzMDMwMzAzMDM0MzAzNjM0MzQzOTMyMzYzMyIsIm5vbSI6Ikp1YW4gVXJpYmUgU8OhbmNoZXoiLCJjZHAiOiIxMjMxMjMxMiIsImVzcCI6IkNpcnVnw61hIEdlbmVyYWwiLCJpbmMiOiJVTkFNIiwibHRyIjoiQ2VudHJvIE3DqWRpY28gTmFjaW9uYWwgU2lnbG8gWFhJIEF2LiBDdWF1aHTDqW1vYyAzMzAsIERvY3RvcmVzLCBDdWF1aHTDqW1vYywgMDY3MjAgQ2l1ZGFkIGRlIE3DqXhpY28sIENETVgiLCJ0ZWwiOiI0NDIyNzEyMTYxIn0sInBhYyI6eyJ1aWQiOjE4NzEsIm5vbSI6Ik1pZ3VlbCBHb256w6FsZXogRmVybsOhbmRleiJ9LCJ0cnQiOlt7InVpZCI6MzU3Nywibm9tIjoiQU5BTEdFTiAyMjBNRyBUQUIgQy8yMCIsImluZCI6IlRvbWFyIHVuYSB0YWJsZXRhIGNhZGEgOCBob3JhcyIsInVuaSI6MSwidXBjIjoiMTIzMTIzMTIzMTIzIn1dLCJlbnYiOiJkZXYifQ.FCuGkg6CM5Yk7YpA0aqgml85hQWcoxYK637jtXX1MwymSAMQNXVTvCs1_iUMV-IPfXQw22hx4oy0zBGJbKnM_-qaVSqL-f7adjPJo46HomqSa8fxp9eun73lxNAqa4VxNPxInV8DQv4R-G3FWzx2RFNNTDG5ch7p3QFbdyZl-zs
+```
+
+Es posible que, por limitaciones de impresión o resolución de pantalla, la receta entera no quepa en un solo código QR. En este caso se puede utilizar la técnica de "chunking". Esto se puede lograr "cortando" el JWT de la receta (en los pedazos que sean necesarios, a discreción del sistema emisor.) e insertándolos en un qr que comience con las letras `CFIDE:X-Y:` seguidas del JWT de la receta; donde X representa el índice del código QR actual (comenzando en cero `0`) y Y representa la cantidad totales de códigos QR de la receta. 
+
+```
+CFIDE:0-2:eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcnYiOiJNUkQtMC4xIiwianRpIjoiNTQtMTg3MS0xNTk0OTM2NjEwIiwiaWF0IjoxNTk0OTM2NjEwLCJpc3MiOiJNUkQiLCJtZWQiOnsidWlkIjo1NCwiY3JzIjoiMzAzMDMwMzAzODMxMzAzMDMwMzAzMDM0MzAzNjM0MzQzOTMyMzYzMyIsIm5vbSI6Ikp1YW4gVXJpYmUgU8OhbmNoZXoiLCJjZHAiOiIxMjMxMjMxMiIsImVzcCI6IkNpcnVnw61hIEdlbmVyYWwiLCJpbmMiOiJVTkFNIiwibHRyIjoiQ2VudHJvIE3DqWRpY28gTmFjaW9uYWwgU2lnbG8gWFhJIEF2LiBDdWF1aHTDqW1vYyAzMzAsIERvY3RvcmVzLCBDdWF1aHTDqW1vYywgMDY3MjAgQ2l1ZGFkIGRlIE3DqXhpY28sIENETVgiLCJ0Z
+
+CFIDE:1-2:WwiOiI0NDIyNzEyMTYxIn0sInBhYyI6eyJ1aWQiOjE4NzEsIm5vbSI6Ik1pZ3VlbCBHb256w6FsZXogRmVybsOhbmRleiJ9LCJ0cnQiOlt7InVpZCI6MzU3Nywibm9tIjoiQU5BTEdFTiAyMjBNRyBUQUIgQy8yMCIsImluZCI6IlRvbWFyIHVuYSB0YWJsZXRhIGNhZGEgOCBob3JhcyIsInVuaSI6MSwidXBjIjoiMTIzMTIzMTIzMTIzIn1dLCJlbnYiOiJkZXYifQ.FCuGkg6CM5Yk7YpA0aqgml85hQWcoxYK637jtXX1MwymSAMQNXVTvCs1_iUMV-IPfXQw22hx4oy0zBGJbKnM_-qaVSqL-f7adjPJo46HomqSa8fxp9eun73lxNAqa4VxNPxInV8DQv4R-G3FWzx2RFNNTDG5ch7p3QFbdyZl-zs
+```
+
 ## Ejemplo de una receta digital con el estándar FIDE-0.2
 
 ### Cadena JWT:
@@ -166,7 +182,7 @@ Este diccionario se utiliza en cualquier lugar en el que se requiera definir una
 |otr|Otro|
 
 
-## FIDE-VIA-1 Diccionario de vías de administración
+### FIDE-VIA-1 Diccionario de vías de administración
 
 
 |Valor|Explicación|
@@ -193,7 +209,7 @@ Este diccionario se utiliza en cualquier lugar en el que se requiera definir una
 |otr|Otra|
 
 
-## FIDE-FRD-1 Frecuencias de tratamiento
+### FIDE-FRD-1 Frecuencias de tratamiento
 
 Las frecuencias de tratamiento se indican con la siguiente estructura:
 
