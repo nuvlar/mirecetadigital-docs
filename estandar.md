@@ -23,16 +23,17 @@ El payload de las recetas deben de tener la siguiente estructura
 |exp|int (unixtime)|No|El momento en el tiempo a partir del cual la receta será inválida|
 |nbf|int (unixtime)|No|El momento en el tiempo a partir del cual la receta será válida|
 |dtc|int (unixtime)|No|El timestamp de la fecha y hora de consulta|
-|ind|string (unixtime)|No|Indicaciones generales de la receta|
+|ind|string|No|Indicaciones generales de la receta|
 |env|string|Sí|El ambiente en el que se emite la receta (puede ser "dist" para distribución o "dev" para pruebas). Las farmacias sólamente aceptarán las recetas emitidas en ambiente "dist"|
 |cru|string|Sí, en recetas firmadas por servidor, y no por médico|URL HTTP del certificado público de la llave utilizada para firmar la receta, en caso de no utilizar la llave privada del médico. Solamente válida cuando no haya medicamentos controlados.|
 |med|object|Sí|Los datos del médico que emite la receta|
 |med.uid|string|No|El identificador interno del médico (en la plataforma emisora de la receta).|
 |med.ttl|string|No|El título del médico (Dr., Dra., FT, etc.)|
 |med.nom|string|Sí|El nombre del médico que emite la receta|
+|med.eml|string|No|Email del médico que emite la receta|
 |med.crs|string|Sí, en recetas de medicamentos controlados|El número serial en hexadecimal del certificado público del médico (archivo .cer emitido por el SAT)|
 |med.cdp|int|Sí|Número de cédula profesional del médico emitida por la SEP|
-|med.cde|int|Sí|Número de cédula de especialidad del médico emitida por la SEP|
+|med.cde|int|No|Número de cédula de especialidad del médico emitida por la SEP|
 |med.esp|string|Sí|Especialidad del médico|
 |med.inc|string|Sí|Institución certificadora del médico (escuela que emite el título)|
 |med.pai|string|No|País del médico|
@@ -44,6 +45,8 @@ El payload de las recetas deben de tener la siguiente estructura
 |pac|object|Sí|Los datos del paciente al cual es dirigida la receta|
 |pac.uid|string|No|El identificador interno del paciente (en la plataforma emisora de la receta).|
 |pac.nom|string|Sí|Nombre del paciente al cual es dirigida la receta|
+|pac.eml|string|No|Email del paciente al cual es dirigida la receta|
+|pac.tel|string|No|Teléfono del paciente al cual es dirigida la receta (en formato internacional, +525844392754)|
 |pac.pes|float|No|Peso(en kg) del paciente|
 |pac.alt|float|No|Altura (en cm) del paciente|
 |pac.edd|int|No|Edad (en años) del paciente|
