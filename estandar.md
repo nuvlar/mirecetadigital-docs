@@ -58,19 +58,21 @@ El payload de las recetas deben de tener la siguiente estructura
 |med.rfc|string|No|Número de Registro Federal de Contribuyentes (RFC) del paciente|
 |med.cur|string|No|Clave Única del Registro de la Población (CURP) del paciente|
 |trt|object array|Sí|El tratamiento (medicamentos) que el paciente necesita|
-|trt[].uid|string|No|El identificador interno del medicamento (en la plataforma emisora de la receta).|
+|trt[].cat|string|Sí|Catálogo utilizado para |
+|trt[].uid|string|No|El identificador interno del medicamento (en el catálogo utilizado en `trt[].cat`).|
 |trt[].nom|string|Sí|Nombre, ingredientes y presentación del medicamento|
 |trt[].ind|string|Sí (si no se incluye parámetro frd)|Indicaciones del tratamiento|
 |trt[].for|string|No|Forma farmacéutica del medicamento (según diccionario de formas farmacéuticas FIDE-FOR-1)|
 |trt[].via|string|No|Vía de administración (según diccionario de vías de administración FIDE-VIA-1)|
 |trt[].frd|string|Sí (si no se incluye parámetro ind)|Frecuencia de tratamiento (codificado según FIDE-FRD-1)|
 |trt[].uni|int|No|Cantidad de unidades del medicamento que se recetan|
-|trt[].sku|string|No|Número interno de almacén del medicamento|
-|trt[].upc|string|No|Número identificador universal del medicamento (GS1)|
 |trt[].ing|object array|No|Ingredientes activos del medicamento|
+|trt[].upc|string|No|Número identificador universal del medicamento (GS1)|
 |trt\[\].ing\[\].act|string|Sí|Nombre del ingrediente activo|
 |trt\[\].ing\[\].med|string|No|Medida por unidad (por tableta, gota, etc) (según diccionario de medida de ingredientes FIDE-MED-1)|
 |trt\[\].ing\[\].can|float|No|Cantidad del compuesto (ejemplo: 500 para indicar 500mg)|
+|trt\[\].ing\[\].uid|string|No|Identificador único del ingrediente (en el catálogo definido en `trt[].cat`)|
+|trt\[\].ing\[\].cid|string|No|Identificador único de la concentración (en el catálogo definido en `trt[].cat`)|
 
 ## Estructura de QR
 
@@ -87,6 +89,14 @@ CFIDE:0-2:eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcnYiOiJNUkQtMC4xIiwianRpIjoiN
 
 CFIDE:1-2:WwiOiI0NDIyNzEyMTYxIn0sInBhYyI6eyJ1aWQiOjE4NzEsIm5vbSI6Ik1pZ3VlbCBHb256w6FsZXogRmVybsOhbmRleiJ9LCJ0cnQiOlt7InVpZCI6MzU3Nywibm9tIjoiQU5BTEdFTiAyMjBNRyBUQUIgQy8yMCIsImluZCI6IlRvbWFyIHVuYSB0YWJsZXRhIGNhZGEgOCBob3JhcyIsInVuaSI6MSwidXBjIjoiMTIzMTIzMTIzMTIzIn1dLCJlbnYiOiJkZXYifQ.FCuGkg6CM5Yk7YpA0aqgml85hQWcoxYK637jtXX1MwymSAMQNXVTvCs1_iUMV-IPfXQw22hx4oy0zBGJbKnM_-qaVSqL-f7adjPJo46HomqSa8fxp9eun73lxNAqa4VxNPxInV8DQv4R-G3FWzx2RFNNTDG5ch7p3QFbdyZl-zs
 ```
+
+Si se desea, también se puede utilizar un QR apuntador a la receta original:
+
+```
+FIDEURL:https://mirecetadigital.com/receta/zU3Nywibm9tIjoiQU5BTEdFTiAyMjBNRy
+```
+
+La URL debe de ser una liga directa al texto del JWT de la receta electrónica FIDE. El header de codificación debe de ser `text/plain` y el endpoint debe de responder a una solicitud REST de tipo `GET` por parte del cliente.
 
 ## Ejemplo de una receta digital con el estándar FIDE-0.2
 
@@ -171,18 +181,61 @@ Este diccionario se utiliza en cualquier lugar en el que se requiera definir una
 |par|Parches|
 |pst|Pasta|
 |plv|Polvo|
+|pmd|Pomada|
 |shm|Shampoo|
 |sld|Sólido|
 |sol|Solución|
 |sin|Solución inyectable|
 |spr|Spray|
 |spn|Suspensión|
+|spt|Supositorio|
 |tab|Tabletas|
 |tlp|Tabletas de liberación prolongada|
 |tds|Tabletas dispersables|
 |tef|Tabletas efervescentes|
 |ung|Ungüento|
 |otr|Otro|
+
+### FIDE-MED-1 Diccionario de medidas
+
+Las principales unidades son aquellas usadas para medir peso, volumen y cantidad de una sustancia.
+* Peso: expresado en Kg, g, mg, mcg
+* Volumen: expresado en litros, ml=cc
+* Cantidad de una Sustancia: expresado en Moles (Mol, milimoles)
+* La concentración de un fármaco se expresa usualmente en miligramos (mg)
+
+La siguiente tabla muestra las medidas utilizables en el estándar FIDE. Todos los siguientes valores son sensibles a capitalización:
+
+|Nombre|Valor|
+|--|--|
+|Litros|L|
+|Mililitros|mL|
+|Milimol|Mmol|
+|Miliequivalente|mEq|
+|Kilogramos|Kg|
+|Gramos|G|
+|Miligramos|Mg|
+|Microgramos|Mcg
+|Horas|hrs|
+|Unidades internacionales (unidad de medida para insulinas, vitaminas y penicilinas)|UI|
+|Libras|Lb|
+|Onzas|Oz|
+|Galones|Gal|
+|Dosis|dos|
+|Nebulizaciones|nbl|
+
+#### Tabla de unidades equivalentes para soluciones líquidas
+
+|Cantidad indicada|Unidad de medida considerada|
+|--|--|
+|1 cc|1 mL|
+|Media cucharadita|2.5 mL|
+|1 cucharadita|5 mL|
+|1 cucharada|15 mL|
+|3 cucharaditas|1 cucharada = 15 mL|
+|1 gtt (gota)|0.05 mL|
+|1 mL|20 tt (gotas)|
+
 
 
 ### FIDE-VIA-1 Diccionario de vías de administración
@@ -201,12 +254,12 @@ Este diccionario se utiliza en cualquier lugar en el que se requiera definir una
 |nsl|Nasal|
 |oft|Oftálmica|
 |orl|Oral|
-|opt|Óptica|
+|otc|Ótica|
 |rct|Rectal|
 |sbl|Sublingual|
 |tpc|Tópica|
+|trd|Transdérmica|
 |vag|Vaginal|
-|ung|Ungeal|
 |noa|N/A|
 |orv|Oral/Vaginal|
 |otr|Otra|
@@ -217,13 +270,14 @@ Este diccionario se utiliza en cualquier lugar en el que se requiera definir una
 Las frecuencias de tratamiento se indican con la siguiente estructura:
 
 ```
-AxB[xC]
+A[B]xC[xD]
 ```
 Donde 
 
-* A es la cantidad de unidades del medicamento que hay que tomarse (las unidades de manejan según FIDE-FOR-1)
-* B es la cantidad de horas que hay que dejar pasar entre cada dosis.
-* C es la cantidad de días que se tiene que mantener el tratamiento. 
+* A es la cantidad de unidades del medicamento que hay que tomarse (las unidades de manejan según FIDE-FOR-1).
+* B es un modificador de A, el cual indica la unidad de medida que se requiere tomar del medicamento, según FIDE-MED-1.
+* C es la cantidad de horas que hay que dejar pasar entre cada dosis.
+* D es la cantidad de días que se tiene que mantener el tratamiento. 
 * Los signos `[]` indican que lo que se encuentra entre ellos es opcional.
 * Los signos `x` son literales y no son modificables, se utilizan como separación.
 
