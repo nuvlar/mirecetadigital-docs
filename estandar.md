@@ -1,15 +1,15 @@
 
-# Estándar de recetas digitales FIDE
+# Estándar de recetas electrónicas FIDE
 
 *Aviso: La versión 0.2 de este estándar continúa en desarrollo activo, para una versión estable del estándar favor de referir a la versión [0.1](estandar-0-1.md)*
 
-El estándar FIDE de recetas digitales es un estándar desarrollado de manera conjunta con distintas empresas y organizadores del sector médico diseñado para crear una receta autocontenida y sin necesidad de un servidor centralizado de validación. 
+El estándar FIDE de recetas electrónicas es un estándar desarrollado de manera conjunta con distintas empresas y organizadores del sector médico diseñado para crear una receta autocontenida y sin necesidad de un servidor centralizado de validación. 
 
-Las recetas de FIDE se firman por medio del estándar JSON Web Token ([RFC 7519](https://tools.ietf.org/html/rfc7519)) con el algoritmo de firmado RS256 del estándar JSON Web Signature ([RFC 7515](https://tools.ietf.org/html/rfc7515)). La llave privada utilizada para firmar la receta digital tiene que ser una llave expedida por el Servicio de Administración Tributaria de México (SAT) bajo el estándar [e.firma](https://www.gob.mx/efirma).
+Este estándar está diseñado para ser compatible con los lineamientos de HL7 FIHR, permitiendo una implementación sencilla en sistemas que ya utilicen este estándar, así como en sistemas que no lo hagan.
+
+Las recetas de FIDE se firman por medio del estándar JSON Web Token ([RFC 7519](https://tools.ietf.org/html/rfc7519)) con el algoritmo de firmado RS256 del estándar JSON Web Signature ([RFC 7515](https://tools.ietf.org/html/rfc7515)). La llave privada utilizada para firmar la receta electrónica tiene que ser una llave expedida por el Servicio de Administración Tributaria de México (SAT) bajo el estándar [e.firma](https://www.gob.mx/efirma).
 
 Las recetas con el estándar FIDE están diseñadas para poder ser contenidas en un código QR o en una URL de navegador web. Ya que el estándar JWT es compatible con el estándar URL, no hay necesidad de codificar antes de insertar una receta en una dirección web.
-
-La estructura de recetas utilizada es un estándar abierto agnóstico a plataformas creado por MiRecetaDigital. Cualquier entidad puede expedir recetas que se ajusten a este estándar.
 
 ## Estructura de payload JSON Web Token de recetas (Ver. 0.2)
 
@@ -17,66 +17,109 @@ El payload de las recetas deben de tener la siguiente estructura
 
 |Campo|Tipo|Requerido|Explicación|
 |--|--|--|--|
-|prv|string|Sí|Identifica la versión de estándar bajo la cual se emitió la receta (Actual: "FIDE-0.2")|
+|version|string|Sí|Identifica la versión de estándar bajo la cual se emitió la receta (Actual: "FIDE-0.2")|
 |jti|string|Sí|El identificador único de la receta. Debe de contener la suficiente información para que las posibilidades de duplicarse (incluso entre plataformas expedidoras) sea mínima|
 |iss|string|No|El identificador de la entidad (empresa o sistema) que generó la receta.|
 |exp|int (unixtime)|No|El momento en el tiempo a partir del cual la receta será inválida|
 |nbf|int (unixtime)|No|El momento en el tiempo a partir del cual la receta será válida|
 |dtc|int (unixtime)|No|El timestamp de la fecha y hora de consulta|
-|ind|string|No|Indicaciones generales de la receta|
-|env|string|Sí|El ambiente en el que se emite la receta (puede ser "dist" para distribución o "dev" para pruebas). Las farmacias sólamente aceptarán las recetas emitidas en ambiente "dist"|
-|cru|string|Sí, en recetas firmadas por servidor, y no por médico|URL HTTP del certificado público de la llave utilizada para firmar la receta, en caso de no utilizar la llave privada del médico. Solamente válida cuando no haya medicamentos controlados.|
-|med|object|Sí|Los datos del médico que emite la receta|
-|med.uid|string|No|El identificador interno del médico (en la plataforma emisora de la receta).|
-|med.ttl|string|No|El título del médico (Dr., Dra., FT, etc.)|
-|med.nom|string|Sí|El nombre del médico que emite la receta|
-|med.eml|string|No|Email del médico que emite la receta|
-|med.crs|string|Sí, en recetas de medicamentos controlados|El número serial en hexadecimal del certificado público del médico (archivo .cer emitido por el SAT)|
-|med.cdp|int|Sí|Número de cédula profesional del médico emitida por la SEP|
-|med.cde|int|No|Número de cédula de especialidad del médico emitida por la SEP|
-|med.esp|string|Sí|Especialidad del médico|
-|med.inc|string|Sí|Institución certificadora del médico (escuela que emite el título)|
-|med.pai|string|No|País del médico|
-|med.edo|string|No|Estado del médico|
-|med.ltr|string|Sí|Lugar y dirección del consultorio|
-|med.tel|string|Sí|Número telefónico del médico|
-|med.rfc|string|No|Número de Registro Federal de Contribuyentes (RFC) del médico|
-|med.cur|string|No|Clave Única del Registro de la Población (CURP) del médico|
-|pac|object|Sí|Los datos del paciente al cual es dirigida la receta|
-|pac.uid|string|No|El identificador interno del paciente (en la plataforma emisora de la receta).|
-|pac.nom|string|Sí|Nombre del paciente al cual es dirigida la receta|
-|pac.eml|string|No|Email del paciente al cual es dirigida la receta|
-|pac.tel|string|No|Teléfono del paciente al cual es dirigida la receta (en formato internacional, +525844392754)|
-|pac.pes|float|No|Peso(en kg) del paciente|
-|pac.alt|float|No|Altura (en cm) del paciente|
-|pac.edd|int|No|Edad (en años) del paciente|
-|pac.dia|string|No|Diagnóstico del paciente|
-|pac.par|string|No|Presión arterial del paciente (mmHg)|
-|pac.tmp|float|No|Temperatura (en centígrados) del paciente|
-|med.pai|string|No|País del paciente|
-|med.edo|string|No|Estado del paciente|
-|med.rfc|string|No|Número de Registro Federal de Contribuyentes (RFC) del paciente|
-|med.cur|string|No|Clave Única del Registro de la Población (CURP) del paciente|
-|trt|object array|Sí|El tratamiento (medicamentos) que el paciente necesita|
-|trt[].cat|string|Sí|Catálogo utilizado para |
-|trt[].uid|string|No|El identificador interno del medicamento (en el catálogo utilizado en `trt[].cat`).|
-|trt[].nom|string|Sí|Nombre, ingredientes y presentación del medicamento|
-|trt[].ind|string|Sí (si no se incluye parámetro frd)|Indicaciones del tratamiento|
-|trt[].for|string|No|Forma farmacéutica del medicamento (según diccionario de formas farmacéuticas FIDE-FOR-1)|
-|trt[].via|string|No|Vía de administración (según diccionario de vías de administración FIDE-VIA-1)|
-|trt[].frd|string|Sí (si no se incluye parámetro ind)|Frecuencia de tratamiento (codificado según FIDE-FRD-1)|
-|trt[].uni|int|No|Cantidad de unidades del medicamento que se recetan|
-|trt[].ing|object array|No|Ingredientes activos del medicamento|
-|trt[].upc|string|No|Número identificador universal del medicamento (GS1)|
-|trt\[\].ing\[\].act|string|Sí|Nombre del ingrediente activo|
-|trt\[\].ing\[\].med|string|No|Medida por unidad (por tableta, gota, etc) (según diccionario de medida de ingredientes FIDE-MED-1)|
-|trt\[\].ing\[\].can|float|No|Cantidad del compuesto (ejemplo: 500 para indicar 500mg)|
-|trt\[\].ing\[\].uid|string|No|Identificador único del ingrediente (en el catálogo definido en `trt[].cat`)|
-|trt\[\].ing\[\].cid|string|No|Identificador único de la concentración (en el catálogo definido en `trt[].cat`)|
+|generalInstructions|string|No|Indicaciones generales de la receta|
+|environment|string|Sí|El ambiente en el que se emite la receta (puede ser "dist" para distribución o "dev" para pruebas). Las farmacias sólamente aceptarán las recetas emitidas en ambiente "dist"|
+|certificateURL|string|Sí, en recetas firmadas por servidor, y no por médico|URL HTTP del certificado público de la llave utilizada para firmar la receta, en caso de no utilizar la llave privada del médico. Solamente válida cuando no haya medicamentos controlados.|
+|requester|object Requester|Sí|Un objeto Requester con los datos del médico que emite la receta|
+|subject|object Subject|Sí|Los datos del paciente|
+|medication[]|object array Medication|Sí|El tratamiento (medicamentos) que el paciente necesita|
+
+
+### Objeto Requester
+|Campo|Tipo|Requerido|Explicación|
+|--|--|--|--|
+|identifier|string|No|El identificador interno del médico (en la plataforma emisora de la receta).|
+|title|string|No|El título del médico (Dr., Dra., FT, etc.)|
+|name|string|Sí|El nombre del médico que emite la receta|
+|rfc|string|No|Email del médico que emite la receta|
+|certSerial|string|Sí, en recetas de medicamentos controlados|El número serial en hexadecimal del certificado público del médico (archivo .cer emitido por el SAT)|
+|telephone|string|Sí|Número telefónico del médico (en formato internacional, +525844392754)|
+|email|string|No|Dirección de correo electrónico del médico|
+|qualification|object|Sí|Objeto conteniendo la formación del médico|
+|qualification.name|string|Sí|El nombre de la especialidad (o medicina general en su caso) del médico|
+|qualification.identifier|int|Sí|Número de cédula profesional del médico emitida por la SEP|
+|qualification.issuer|string|Sí|Institución certificadora del médico (escuela que emite el título)|
+|gender|string enum|No|El género del médico: `[male,female,other,unknown]`|
+|birthDate|string date|No|La fecha de nacimiento del médico en formato YYYY, YYYY-MM, or YYYY-MM-DD |
+|rfc|string|No|Número de Registro Federal de Contribuyentes (RFC) del médico|
+|curp|string|No|Clave Única del Registro de la Población (CURP) del médico|
+|address|object Address|Sí|Objeto con la dirección del consultorio del médico|
+
+### Objeto Subject
+
+|Campo|Tipo|Requerido|Explicación|
+|--|--|--|--|
+|subject.name|string|Sí|El nombre completo del paciente|
+|subject.identifier|string|No|El identificador interno del paciente en la plataforma|
+|subject.rfc|string|No|Número de Registro Federal de Contribuyentes (RFC) del paciente|
+|subject.curp|string|No|Clave Única del Registro de la Población (CURP) del paciente|
+|subject.telephone|string|Sí|Número telefónico del paciente (en formato internacional, +525844392754)|
+|subject.email|string|No|Dirección de correo electrónico del paciente|
+|subject.gender|string enum|No|El género del médico: `[male,female,other,unknown]`|
+|subject.weight|float|No|Peso(en kg) del paciente|
+|subject.height|float|No|Altura (en cm) del paciente|
+|subject.birthDate|string date|No|La fecha de nacimiento del paciente en formato YYYY, YYYY-MM, or YYYY-MM-DD |
+|subject.diagnosis|string|No|Diagnóstico del paciente|
+|subject.bloodPressure|object|No|objeto con presión arterial del paciente (mmHg)|
+|subject.bloodPressure.systolic|int|Sí|Presión sistólica del paciente|
+|subject.bloodPressure.diastolic|int|Sí|Presión diastólica del paciente|
+|subject.temperature|float|No|Temperatura (en centígrados) del paciente|
+|subject.address|object Address|No|Objeto con la dirección de vivienda del paciente|
+
+
+### Objeto Medication
+
+|Campo|Tipo|Requerido|Explicación|
+|--|--|--|--|
+|dosageInstruction|object Dosage|Sí|Un objeto de tipo Dosage con las instrucciones de |
+|identifier|string|Sí|El identificador interno del medicamento (plataforma emisora)|
+|code|string|Sí|El identificador universal del medicamento, siguiendo estándares como  RxNorm, SNOMED CT, IDMP, etc. Si no hay un código a utilizar, escribir el nombre del medicamento|
+|form|int|No|El identificador de forma farmacéutica siguiento el estándar [SNOMEDCTFormCodes](https://www.hl7.org/fhir/valueset-medication-form-codes.html)|
+|fraction|int|Sí|La fracción legislativa del medicamento|
+|ingredient\[\]|object array Ingredient|No|Un arreglo de los ingredientes que tiene el medicamento (pueden ser activos o no activos)|
+
+
+### Objeto Ingredient
+
+|Campo|Tipo|Requerido|Explicación|
+|--|--|--|--|
+|description|text|Sí|Nombre del ingrediente|
+|code|int|No|Código SNOMED del ingrediente (http://snomed.info/sct)|
+|category|string|No|Categoría de ingrediente según https://www.hl7.org/fhir/valueset-substance-category.html|
+|strength|object|No|El radio de concentración de sustancia|
+|strength.numerator|object|No|El numerador del radio de concentración de sustancia|
+|strength.denominator|object|No|El denominador del radio de concentración de sustancia|
+
+### Objeto Address
+
+|Campo|Tipo|Requerido|Explicación|
+|--|--|--|--|
+|address.country|string|No|País|
+|address.state|string|No|Estado|
+|address.city|string|No|Ciudad|
+|address.postalCode|string|No|Código postal|
+|address.line|string|Sí|Lugar y dirección|
+
+### Objeto Dosage
+
+El objeto Dosage se compone de los siguientes campos:
+
+|Campo|Tipo|Requerido|Explicación|
+|--|--|--|--|
+|text|string|No|Explicación en texto sobre cómo tomar el medicamento|
+|additionalInstructions|int enum|No|El código de instrucciones adicionales según [SNOMED CT Additional Dosage Instructions](https://www.hl7.org/fhir/valueset-additional-instruction-codes.html)|
+|frequency|string FIDE-FREQUENCY-1|No|Describe la frecuencia del tratamiento según la metodología FIDE-FREQUENCY-1|
+
 
 ## Estructura de QR
 
-Los QR de recetas digitales FIDE son autocontenidos, y toda la receta puede incluirse en un solo código QR. EL código QR debe de comenzar con las letras `FIDE:` seguidas de la cadena JWT de la receta para poder ser interpretado por los lectores de QR de las farmacias.
+Los QR de recetas electrónicas FIDE son autocontenidos, y toda la receta puede incluirse en un solo código QR. EL código QR debe de comenzar con las letras `FIDE:` seguidas de la cadena JWT de la receta para poder ser interpretado por los lectores de QR de las farmacias.
 
 ```
 FIDE:eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcnYiOiJNUkQtMC4xIiwianRpIjoiNTQtMTg3MS0xNTk0OTM2NjEwIiwiaWF0IjoxNTk0OTM2NjEwLCJpc3MiOiJNUkQiLCJtZWQiOnsidWlkIjo1NCwiY3JzIjoiMzAzMDMwMzAzODMxMzAzMDMwMzAzMDM0MzAzNjM0MzQzOTMyMzYzMyIsIm5vbSI6Ikp1YW4gVXJpYmUgU8OhbmNoZXoiLCJjZHAiOiIxMjMxMjMxMiIsImVzcCI6IkNpcnVnw61hIEdlbmVyYWwiLCJpbmMiOiJVTkFNIiwibHRyIjoiQ2VudHJvIE3DqWRpY28gTmFjaW9uYWwgU2lnbG8gWFhJIEF2LiBDdWF1aHTDqW1vYyAzMzAsIERvY3RvcmVzLCBDdWF1aHTDqW1vYywgMDY3MjAgQ2l1ZGFkIGRlIE3DqXhpY28sIENETVgiLCJ0ZWwiOiI0NDIyNzEyMTYxIn0sInBhYyI6eyJ1aWQiOjE4NzEsIm5vbSI6Ik1pZ3VlbCBHb256w6FsZXogRmVybsOhbmRleiJ9LCJ0cnQiOlt7InVpZCI6MzU3Nywibm9tIjoiQU5BTEdFTiAyMjBNRyBUQUIgQy8yMCIsImluZCI6IlRvbWFyIHVuYSB0YWJsZXRhIGNhZGEgOCBob3JhcyIsInVuaSI6MSwidXBjIjoiMTIzMTIzMTIzMTIzIn1dLCJlbnYiOiJkZXYifQ.FCuGkg6CM5Yk7YpA0aqgml85hQWcoxYK637jtXX1MwymSAMQNXVTvCs1_iUMV-IPfXQw22hx4oy0zBGJbKnM_-qaVSqL-f7adjPJo46HomqSa8fxp9eun73lxNAqa4VxNPxInV8DQv4R-G3FWzx2RFNNTDG5ch7p3QFbdyZl-zs
@@ -98,7 +141,7 @@ FIDEURL:https://mirecetadigital.com/receta/zU3Nywibm9tIjoiQU5BTEdFTiAyMjBNRy
 
 La URL debe de ser una liga directa al texto del JWT de la receta electrónica FIDE. El header de codificación debe de ser `text/plain` y el endpoint debe de responder a una solicitud REST de tipo `GET` por parte del cliente.
 
-## Ejemplo de una receta digital con el estándar FIDE-0.2
+## Ejemplo de una receta electrónica con el estándar FIDE-0.2
 
 ### Cadena JWT:
 
@@ -147,7 +190,7 @@ eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcnYiOiJNUkQtMC4xIiwianRpIjoiNTQtMTg3MS0
 
 ## Validación de recetas sin relación de confianza
 
-Las recetas emitidas con el estándar de FIDE no requieren una relación de confianza entre las farmacias y MiRecetaDigital. Cada receta digital contiene dentro de sí misma los métodos para verificar su veracidad y validez.
+Las recetas emitidas con el estándar de FIDE no requieren una relación de confianza entre las farmacias y el emisor de recetas. Cada receta electrónica contiene dentro de sí misma los métodos para verificar su veracidad y validez.
 
 Los pasos para validar una receta con el estándar FIDE-0.2 son los siguientes:
 
@@ -164,108 +207,7 @@ Una vez que estos pasos están completados puedes proceder a surtir la receta. S
 
 ## Diccionarios de valores y metodologías de datos
 
-### FIDE-FOR-1 Diccionario de formas farmacéuticas
-
-Este diccionario se utiliza en cualquier lugar en el que se requiera definir una forma farmacéutica de un medicamento:
-
-|Valor|Explicación|
-|--|--|
-|aer|Aerosol|
-|cap|Cápsulas|
-|clp|Cápsulas de liberación prolongada|
-|com|Comprimidos|
-|crm|Crema|
-|gel|Gel|
-|jar|Jarabe|
-|ovu|Óvulo|
-|par|Parches|
-|pst|Pasta|
-|plv|Polvo|
-|pmd|Pomada|
-|shm|Shampoo|
-|sld|Sólido|
-|sol|Solución|
-|sin|Solución inyectable|
-|spr|Spray|
-|spn|Suspensión|
-|spt|Supositorio|
-|tab|Tabletas|
-|tlp|Tabletas de liberación prolongada|
-|tds|Tabletas dispersables|
-|tef|Tabletas efervescentes|
-|ung|Ungüento|
-|otr|Otro|
-
-### FIDE-MED-1 Diccionario de medidas
-
-Las principales unidades son aquellas usadas para medir peso, volumen y cantidad de una sustancia.
-* Peso: expresado en Kg, g, mg, mcg
-* Volumen: expresado en litros, ml=cc
-* Cantidad de una Sustancia: expresado en Moles (Mol, milimoles)
-* La concentración de un fármaco se expresa usualmente en miligramos (mg)
-
-La siguiente tabla muestra las medidas utilizables en el estándar FIDE. Todos los siguientes valores son sensibles a capitalización:
-
-|Nombre|Valor|
-|--|--|
-|Litros|L|
-|Mililitros|mL|
-|Milimol|Mmol|
-|Miliequivalente|mEq|
-|Kilogramos|Kg|
-|Gramos|G|
-|Miligramos|Mg|
-|Microgramos|Mcg
-|Horas|hrs|
-|Unidades internacionales (unidad de medida para insulinas, vitaminas y penicilinas)|UI|
-|Libras|Lb|
-|Onzas|Oz|
-|Galones|Gal|
-|Dosis|dos|
-|Nebulizaciones|nbl|
-
-#### Tabla de unidades equivalentes para soluciones líquidas
-
-|Cantidad indicada|Unidad de medida considerada|
-|--|--|
-|1 cc|1 mL|
-|Media cucharadita|2.5 mL|
-|1 cucharadita|5 mL|
-|1 cucharada|15 mL|
-|3 cucharaditas|1 cucharada = 15 mL|
-|1 gtt (gota)|0.05 mL|
-|1 mL|20 tt (gotas)|
-
-
-
-### FIDE-VIA-1 Diccionario de vías de administración
-
-
-|Valor|Explicación|
-|--|--|
-|buc|Bucal|
-|bcf|Bucofaríngea|
-|ctn|Cutánea|
-|ext|Externa|
-|inh|Inhalatoria|
-|ino|Intraocular|
-|inv|Intravenosa|
-|iny|Inyectable|
-|nsl|Nasal|
-|oft|Oftálmica|
-|orl|Oral|
-|otc|Ótica|
-|rct|Rectal|
-|sbl|Sublingual|
-|tpc|Tópica|
-|trd|Transdérmica|
-|vag|Vaginal|
-|noa|N/A|
-|orv|Oral/Vaginal|
-|otr|Otra|
-
-
-### FIDE-FRD-1 Frecuencias de tratamiento
+### FIDE-FREQUENCY-1 Frecuencias de tratamiento
 
 Las frecuencias de tratamiento se indican con la siguiente estructura:
 
@@ -288,7 +230,7 @@ Si se necesitan indicaciones más complejas que lo que este algoritmo permite se
 
 AVISO: esto es una propuesta y no se encuentra aún implementado, se está trabajando en una prueba de concepto que se añadirá a este repositorio próximamente.
 
-Uno de los problemas de las recetas digitales es es hecho de requerir que no se pueda realizar un "doble gasto" de ésta; es decir, que un paciente no pueda surtir la misma receta dos veces.
+Uno de los problemas de las recetas electrónicas es es hecho de requerir que no se pueda realizar un "doble gasto" de ésta; es decir, que un paciente no pueda surtir la misma receta dos veces.
 
 Se propone implementar un sistema basado en la tecnología [IPFS](https://ipfs.io/) y [Orbitdb](https://orbitdb.org/) para manejar una base de datos distribuida sencilla con las recetas surtidas por cada farmacia. De esta manera los actores interesados podrían suscribirse a las bases de datos de cada farmacia y ver un registro de las recetas que se han surtido en cada una de ellas. Estas bases de datos serían públicas y descentralizadas, para aumentar la confiabilidad y requerir en la menor cantidad de un órgano central regulador.
 
