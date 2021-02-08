@@ -143,6 +143,7 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
    "qr_hash":"SKHRUEK12372SHA",
    "digital_signature":"{hash de firma digital}",
    "json":"{objeto json firmado con datos de receta}",
+   "qr_fide":"{String a ser convertido en QR de escaneo para surtir la receta en farmacias que hagan uso del estandard FIDE}",
    "prescription_url" : "{URL para poder ver los detalles de una receta dentro de MRD}",
    "medicines":[
       {
@@ -637,14 +638,15 @@ returns => { prescriptions: PRESCRIPTION [ ] }
 
 ## prescription.validateJWT
 
-Verificar que el JWT de una receta cualquiera en estandard MRD-0.1 o superior este correctamente formado y firmado por el médico que se menciona en la receta.
+Verificar que el JWT de una receta cualquiera en estandard MRD-0.1 o FIDE este correctamente formado y firmado por el médico que se menciona en la receta.
 
 ### Parámetros:
 
 |Nombre|Tipo|Requerido|Explicacion
 |--|--|--|--|
 |_token|string|Sí|El token de acceso de tu app|
-|jwt|string|Sí|JWT de una receta creada usando el estandard "MRD-0.1" o superior. (En recetas creadas mediante este API, digital_signature de un objeto PRESCRIPTION)|
+|jwt|string|Sí|JWT de una receta creada usando el estandard "MRD-0.1" o "FIDE". (En recetas creadas mediante este API, digital_signature de un objeto PRESCRIPTION)|
+|legacy|int|No|Si tiene valor 1, se validara el JWT estandard "MRD-0.1. Defecto: 0 / Validar estandard FIDE más reciente|
 
 ### Ejemplo de llamada:
 
@@ -655,7 +657,7 @@ Verificar que el JWT de una receta cualquiera en estandard MRD-0.1 o superior es
 }
 ```
 
-returns => { valid: boolean, payload: RECETA_STANDARD_MRD-0.X, public_certificate_url: string, public_certificate_pem: string }
+returns => { valid: boolean, payload: RECETA_STANDARD_MRD-0.X-FIDE, public_certificate_url: string, public_certificate_pem: string }
 
 ## analysis.list
 
