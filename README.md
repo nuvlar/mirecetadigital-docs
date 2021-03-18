@@ -541,7 +541,6 @@ Crea un texto con un payload JSON en base64url compatible con el estándar JSON 
 |medicines|object array|Sí|Arreglo de objetos con las siguientes características:|
 |&nbsp;&nbsp;&nbsp;&nbsp;medicine_id|int|Sí|Id del medicamento que se receta|
 |&nbsp;&nbsp;&nbsp;&nbsp;indications|string|Sí|Indicaciones al paciente del medicamento|
-|&nbsp;&nbsp;&nbsp;&nbsp;units|int|Sí|Cantidad de unidades del medicamento a surtir|
 
 ### Ejemplo de llamada:
 
@@ -553,8 +552,7 @@ Crea un texto con un payload JSON en base64url compatible con el estándar JSON 
    "medicines":[
       {
          "medicine_id":123,
-         "indications":"Tomar cada 8 horas por 3 días",
-         "units":2
+         "indications":"Tomar cada 8 horas por 3 días"
       }
    ]
 }
