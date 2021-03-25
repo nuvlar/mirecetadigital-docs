@@ -772,6 +772,7 @@ Lista los medicamentos disponibles para ser recetados
 |--|--|--|--|
 |_token|string|Sí|El token de acceso de tu app|
 |search|string|No|Se filtran los medicamentos por nombre|
+|ignoreActiveIngredients|int|No|Si se envía `0`, se buscaran medicamentos con nombre o ingredientes activos según el parametro 'search'. Si se envía `1`, se buscaran medicamentos en base a su nombre según el parametro 'search'. Default `0`|
 |page|int|No|Parámetro de paginado, comienza en `0`. Si no se envía se enviará la primera página. La candidad de resultados por página es 20|
 
 ### Ejemplo de llamada:
