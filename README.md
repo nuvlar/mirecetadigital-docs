@@ -402,8 +402,8 @@ Se crea un paciente en la plataforma.
 |Nombre|Tipo|Requerido|Explicacion
 |--|--|--|--|
 |_token|string|Sí|El token de acceso de tu app|
-|first_name|string|Sí|Nombre o nombres del paciente|
-|last_name|string|Sí|Apellidos del paciente|
+|first_name|string|Sí|Nombre o nombres del paciente. Si se omite el parametro `last_name` se requiere que `first_name` sea de 2 o más palabras.|
+|last_name|string|No|Apellidos del paciente. En caso de no ser especificado, se considera como apellido la última palabra enviada en el parametro `first_name`|
 |email|string|Sí|Dirección de email del paciente|
 |birthdate|string|No|Fecha de nacimiento del paciente (en formato yyyy-mm-dd)|
 |weight|float|No|Peso del paciente en kg|
