@@ -274,7 +274,7 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
 
 ## medic.create
 
-Utiliza esta llamda para agregar un médico a tu app.
+Utiliza esta llamada para agregar un médico a tu app.
 
 ### Parámetros:
 
