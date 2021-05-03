@@ -17,6 +17,7 @@ MiRecetaDigital (MRD) es un sistema cuyo objetivo principal es la creación y va
 * [Errores devueltos por el API](#errores-devueltos-por-el-api)
 * [Javascript API](#javascript-api)
 * [Estándar de recetas digitales](estandar.md)
+* [Flujo general para crear una receta](#flujo-general-para-crear-una-receta)
 
 # Tokens de API
 
@@ -38,7 +39,7 @@ Los tokens serán generados por parte de MRD y tendrán que ser enviados a trav�
   
 # Conexiones a API
 
-El API de MRD se puede acceder a través del estándar JSON-RPC a través de peticiones POST al siguiente endpoint:
+El API de MRD se puede acceder a través del estándar [JSON-RPC](https://www.jsonrpc.org/specification) a través de peticiones POST al siguiente endpoint:
 
 `https://mirecetadigital.com/api/v1/endpoint.php`
   
@@ -832,9 +833,8 @@ returns => { virtual: PHARMACY_LOCATION_PHYSICAL [ ], physical: PHARMACY_LOCATIO
 # Errores devueltos por el API
 
 ```
-DICCIONARIO DE ERRORES
+Diccionario de errores más comunes para llamadas inválidas.
 
-  
 
 10xxx => Authentication
 
@@ -899,6 +899,14 @@ DICCIONARIO DE ERRORES
 -16xxx => medicine
 
 -16001 => Medicina no existe
+
+
+-32601 => Error no clasificado
+
+ CLASS_FILE_NOT_FOUND       => Asegurese de especificar correctamente el nombre del modelo a llamar del API
+ METHOD_NOT_FOUND           => Asegurese de especificar correctamente el endpoint del modelo a llamar del API
+ UNABLE_TO_PROCESS_REQUEST  => Asegurese de haber estructurado correctamente la llamada al API
+
 ```
 
 # Javascript API
@@ -975,3 +983,54 @@ Parametros:
 # Estándar de recetas digitales
 
 Esta sección ha sido trasladada a [aquí](estandar.md).
+
+
+# Flujo general para crear una receta
+
+Pasos mínimos para crear una receta:
+
+1.- Crear un paciente usando la llamada __patient.create__ especificando al menos los parámetros requeridos y guardar el **patient_id** que se regresa en la llamada.
+
+2.- Crear un medico usando la llamada __medic.create__ especificando todos los parámetros requeridos y guardar su **medic_id** que se regresa en la llamada.
+Entre los parámetros para crear un medico se requiere el archivo .cer de su firma digital (certificado publico) codificado en base64. El proceso se puede hacer por cuenta de la integradora o usar la librería de JS que se adjunta en la pagina de la documentación (usar el  método __MRD.getBase64File__ en un campo html donde el cliente seleccione su archivo .cer)
+
+3.- Determinar que medicamentos se incluirán una receta y buscar sus IDs en la base de datos de medicamentos usando el método __medicine.list__ (mandar nombre del medicamento / ingrediente activo que se busca en el parámetro search. Usar otros parámetros para refinar la búsqueda según se necesite). Una vez se encuentre el medicamento a usar, guardar su **medicine_id**.
+Puedes usar los demás datos de cada medicamento para mostrar mas información en tu sitio web de los medicamentos seleccionados al medico, etc...
+
+4.- Una vez guardados los IDs de medicamentos a usar, hacer una llamada a __prescription.createJson__
+ donde especifiques el **medic_id**, **patient_id** y un campo medicines que corresponda a un arreglo de objectos con entradas que incluyan los campos **medicine_id** e indications (Ver ejemplo de llamada en docs).
+Guardar los datos unsigned_payload y unsigned_payload_token que se devuelven en la llamada.
+ 
+5.- Firmar la cadena unsigned_payload (dentro de 10 minutos de su creación) usando la llave privada del medico que creo la receta usando el estándar de firmado JSON Web Token https://__tools.ietf__.org/html/rfc7519 y usando el algoritmo "RS256". Esta firma se puede hacer a discreción del implementador o puede usar la librería JS que se adjunta en la documentación del API, haciendo uso de los métodos __MRD.getBase64File__ y __MRD.saveKeyFile__ para obtener el archivo .key del medico a partir de un campo input html y __MRD.signPrescription__ para firmar la cadena unsigned_payload y obtener el JSON WebToken que corresponde a la receta firmada. Guardar el JSON Web Token.
+Recuerda que la contraseña que el medico usa para firmar es aquella que uso al momento de crear su par de llaves publica .cer y privada .key
+
+6.- Hacer la llamada a __prescription.create__ (dentro de 10 minutos la llamada a __prescription.createJSON__), especificando el JSON Web Token obtenido del paso anterior bajo el parámetro digital_signature; especificar el dato unsigned_payload_token del paso 4 bajo el campo unsigned_payload_token; especificar el **medic_id** y **patient_id** del medico y paciente que creo la receta.
+De la respuesta guardar el **prescription_id** para futuras llamadas relacionadas a esta misma receta y opcionalmente la receta en si recibida bajo el parámetro prescription.
+
+7.- Muestra a tus usuarios la receta obtenida a tu discreción.
+
+8.- Para crear nuevas recetas, repita todos los pasos.
+Si usara un paciente existente, omita el paso 1 y use el **patient_id** existente.
+Si usara el mismo medico, omita el paso 2 y use el **medic_id** existente.
+Si usara medicamentos ya consultados anteriormente, puede usar los **medicine_id** obtenidos anteriormente.
+Si un medico ya ha firmado al menos una receta usando la librería JS proporcionada en la documentación, su llave privada se guarda en su navegador y permanecerá ahí hasta que limpie cache / localstorage, por lo que en el proceso de firmado, dentro del paso 5 puede omitir los pasos de obtener el archivo .key (usar __MRD.getBase64File__ y __MRD.saveKeyFile__) y puede usar directamente __MRD.signPrescription__ para firmar la receta obtenida en el paso 4.
+Puede verificar si la llave privada del medico permanece en localstorage / no es necesario pedir el archivo .key al medico, usando el método __MRD.getKeyFile__. De no encontrarse la llave en memoria, arrojara un error MRDError('keyretrieve', 'No private keyfile was found on localstorage.'), de lo contrario regresara un string. Puede usar PASOS MÍNIMOS PARA CREAR UNA RECETA:
+1.- Crear un paciente usando la llamada __patient.create__ especificando al menos los parámetros requeridos y guardar el **patient_id** que se regresa en la llamada.
+
+2.- Crear un medico usando la llamada __medic.create__ especificando todos los parámetros requeridos y guardar su **medic_id** que se regresa en la llamada.
+Entre los parámetros para crear un medico se requiere el archivo .cer de su firma digital (certificado publico) codificado en base64. El proceso se puede hacer por cuenta de la integradora o usar la librería de JS que se adjunta en la pagina de la documentación (usar el  método __MRD.getBase64File__ en un campo html donde el cliente seleccione su archivo .cer)
+
+3.- Determinar que medicamentos se incluirán una receta y buscar sus IDs en la base de datos de medicamentos usando el método __medicine.list__ (mandar nombre del medicamento / ingrediente activo que se busca en el parámetro search. Usar otros parámetros para refinar la búsqueda según se necesite). Una vez se encuentre el medicamento a usar, guardar su **medicine_id**.
+Puedes usar los demás datos de cada medicamento para mostrar mas información en tu sitio web de los medicamentos seleccionados al medico, etc...
+
+4.- Una vez guardados los IDs de medicamentos a usar, hacer una llamada a __prescription.createJson__
+ donde especifiques el **medic_id**, **patient_id** y un campo medicines que corresponda a un arreglo de objectos con entradas que incluyan los campos **medicine_id** e indications (Ver ejemplo de llamada en docs).
+Guardar los datos unsigned_payload y unsigned_payload_token que se devuelven en la llamada.
+ 
+5.- Firmar la cadena unsigned_payload (dentro de 10 minutos de su creación) usando la llave privada del medico que creo la receta usando el estándar de firmado [JSON Web Token](https://tools.ietf.org/html/rfc7519) y usando el algoritmo **"RS256"**. Esta firma se puede hacer a discreción del implementador o puede usar la librería JS que se adjunta en la documentación del API, haciendo uso de los métodos __MRD.getBase64File__ y __MRD.saveKeyFile__ para obtener el archivo .key del medico a partir de un campo input html y __MRD.signPrescription__ para firmar la cadena unsigned_payload y obtener el JSON WebToken que corresponde a la receta firmada. Guardar el JSON Web Token.
+Recuerda que la contraseña que el medico usa para firmar es aquella que uso al momento de crear su par de llaves publica .cer y privada .key
+
+6.- Hacer la llamada a __prescription.create__ (dentro de 10 minutos la llamada a __prescription.createJSON__), especificando el JSON Web Token obtenido del paso anterior bajo el parámetro digital_signature; especificar el dato unsigned_payload_token del paso 4 bajo el campo unsigned_payload_token; especificar el **medic_id** y **patient_id** del medico y paciente que creo la receta.
+De la respuesta guardar el **prescription_id** para futuras llamadas relacionadas a esta misma receta y opcionalmente la receta en si recibida bajo el parámetro prescription.
+
+7.- Muestra a tus usuarios la receta obtenida a tu discreción.
