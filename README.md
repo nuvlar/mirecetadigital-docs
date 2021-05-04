@@ -638,8 +638,11 @@ returns => { prescriptions: PRESCRIPTION [ ] }
 ## prescription.validateJWT
 
 Verificar que el JWT de una receta cualquiera en estandard MRD-0.1 o FIDE este correctamente formado y firmado por el médico que se menciona en la receta.
+
 La receta a validar puede ser creada por un tercero y ser validada por este endpoint siempre y cuando se apegue al estandard FIDE.
+
 Si la receta contiene medicamentos bajo fracciones legislativas con restricciones de surtido, se procederá a verificar la firma usando la base de datos de certificados públicos del SAT.
+
 Dependiendo de la fecha de emisión del par de llaves que se usó para firmar la receta, es posible que el SAT no tenga publicada la llave publica del par de llaves en su base de datos de certificados públicos, por lo que la verificación podría fallar en tal ocasión.
 La verificación del certificado en el SAT también puede fallar si la base de datos de certificados públicos del SAT esta bajo mantenimiento.
 
