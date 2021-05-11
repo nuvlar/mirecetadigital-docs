@@ -106,8 +106,9 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
    "institution":"Universidad Nacional Autónoma de México",
    "specialty":"Cirugía General",
    "work_place":"Centro Médico Nacional, Calle.....",
-   "work_phone":5555555555,
-   "public_certificate":"https://mirecetadigital.com/link_a_archivo_pem"
+   "work_phone":"5555555555",
+   "public_certificate":"{ Link a certificado público en formato .pem (válido por 10 minutos) }",
+   "public_certificate_der":"{ Link a certificado público en formato .cer (válido por 10 minutos) }"
 {
 ```
 ## PATIENT
@@ -138,14 +139,16 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
    "medic":"{object medic}",
    "patient":"{object patient}",
    "timestamp_created":1593701796,
-   "timestamp_dispatched":1593701796,
+   "timestamp_dispatched":"{ Campo legacy para recetas MRD-01 }",
    "timestamp_expiration":1593701796,
-   "dispatched":0,
-   "qr_hash":"SKHRUEK12372SHA",
-   "digital_signature":"{hash de firma digital}",
-   "json":"{objeto json firmado con datos de receta}",
-   "qr_fide":"{String a ser convertido en QR de escaneo para surtir la receta en farmacias que hagan uso del estandard FIDE}",
-   "prescription_url" : "{URL para poder ver los detalles de una receta dentro de MRD}",
+   "dispatched": "{ -1: Sin despachos, 0: Despachada parcialmente, 1: Surtida completamente / retenida }",
+   "qr_hash":"{ <METADATO> }",
+   "digital_signature":"{ firma digital de la receta / receta firmada por el medico bajo estandard FIDE }",
+   "json":"{ string de objeto json que el medico firmo con datos de receta / receta FIDE decodificada a JSON (string) }",
+   "qr_fide":"{ string a ser convertido en QR de escaneo para surtir la receta en farmacias que hagan uso del estandard FIDE }",
+   "qr_fide_raw":"{ qr_fide antes de ser codificado en base 32 y procesado segun el estandard FIDE }",
+   "prescription_url" : "{ URL para poder ver los detalles de una receta dentro del sitio web de MiRecetaDigital }",
+   "instructions" : "No consumir alcohol por 2 semanas",
    "medicines":[
       {
          "id":123,
@@ -165,8 +168,13 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
          ],
          "dispatches":[
             {
-               "id":826,
-               "timestamp_dispatched":1593701796
+               "timestamp":1616794753,
+               "identifier":"{ID del medicamento que se surtió}",
+               "quantity":1,
+               "notes":"{ string | null }",
+               "performer_name":"{Encargado de Mostrador}",
+               "performer_address":"{Direccion de sucursal en caso de ser sucursal fisica}",
+               "performer_website":"{Sitio web en caso de ser faramcia digital}"
             }
          ]
          
@@ -174,6 +182,8 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
    ]
 }
 ```
+
+*AVISO: La estructura del campo 'medicines[x].dispatches[y]' podria cambiar en un futuro
 
 ## ANALYSIS
 
@@ -224,9 +234,10 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
    "id":123,
    "medicine_id":123,
    "name":"Flanax",
-   "group":0,
-   "group_name":"NO_CONTROLADO",
-   "observations":"Nombre comercial de Bayer para medicamento con naproxeno sódico como ingrediente activo",
+   "fraction": "{ <METADATO> Fracción legislativa a la que pertenece el medicamento (1 a 6). Valor 0 es usado para marcar medicamentos cuyo registro sanitario ha sido revocado. Valor 7 es simbolico y equivalente a fraccion 6 }",
+   "group": "{ <METADATO LEGACY> 0: NO_CONTROLADO | 1: CONTROLADO | 2: ANTIBIOTICO | 3: VACUNA | 4: NARCOTICO }",
+   "group_name":"{ <METADATO LEGACY> NO_CONTROLADO | CONTROLADO | ANTIBIOTICO | VACUNA | NARCOTICO }",
+   "observations":"{ Notas misc. del medicamento. Ej: Nombre comercial de Bayer para medicamento con naproxeno sódico como ingrediente activo }",
    "active_ingredients":[
       {
          "id":234,
@@ -285,11 +296,11 @@ Utiliza esta llamada para agregar un médico a tu app.
 |first_name|string|Sí|Nombre o nombres del médico|
 |last_name|string|Sí|Apellidos del médico|
 |email|string|Sí|Dirección de email del médico|
-|license|string|Sí|Número de cédula profesional del médico|
+|license|string|Sí|Número de cédula profesional del médico (La que se desee usar en la receta si tiene varias especialidades)|
 |institution|string|Sí|Institución que expidió la certificación del médico|
 |speciality|string|Sí|Especialidad (si son varias separar por comas)|
 |work_place|string|Sí|Nombre y dirección de lugar de trabajo (sin estructura definida, aparecerá en las recetas)|
-|work_phone|string|Sí|Teléfono de contacto del médico|
+|work_phone|string|Sí|Teléfono de contacto del médico (de NO incluir el código internacional, al momento de crear recetas se asume +52)|
 |public_certificate|string|Sí|String codificado en base64 del archivo .cer de la e.firma del médico|
 
 ### Ejemplo de llamada:
@@ -327,7 +338,7 @@ Llamada utilizada para cambiar los datos del médico.
 |institution|string|No|Institución que expidió la certificación del médico|
 |speciality|string|No|Especialidad (si son varias separar por comas)|
 |work_place|string|No|Nombre y dirección de lugar de trabajo (sin estructura definida, aparecerá en las recetas)|
-|work_phone|string|No|Teléfono de contacto del médico|
+|work_phone|string|No|Teléfono de contacto del médico (de NO incluir el código internacional, al momento de crear recetas se asume +52)|
 |public_certificate|string|No|String codificado en base64 del archivo .cer de la e.firma del médico|
 
 ### Ejemplo de llamada:
@@ -530,7 +541,9 @@ returns => { pem: string }
 
 ## prescription.createJson
 
-Crea un texto con un payload JSON en base64url compatible con el estándar JSON Web Token y un token de validación para ese payload. El Payload tendrá que ser firmado por la librería de Javascript de MRD (el firmado utiliza el estándar JWT RS256) para poder crearse la receta mediante la llamada `prescription.create`.
+Crea un texto con un payload JSON compatible con el estándar JSON Web Token y un token de validación para ese payload (válido por 10 minutos). El Payload tendrá que ser firmado por la librería de Javascript de MRD / a su discreción siguiendo el estandard FIDE (el firmado utiliza el estándar JWT RS256) para poder crearse la receta mediante la llamada `prescription.create`.
+
+En caso de que el par de llaves del medico a utilizar haya caducado, se enviara el error con código '-11004'. En tal caso puede actualizar el certificado publico del medico desde el método `medic.edit`
 
 ### Parámetros:
 
@@ -539,6 +552,7 @@ Crea un texto con un payload JSON en base64url compatible con el estándar JSON 
 |_token|string|Sí|El token de acceso de tu app|
 |medic_id|int|Sí|El id de MRD del médico que expide la receta|
 |patient_id|int|Sí|El id del paciente que recibe la receta|
+|instructions|string|No|Indicaciones generales de la receta|
 |medicines|object array|Sí|Arreglo de objetos con las siguientes características:|
 |&nbsp;&nbsp;&nbsp;&nbsp;medicine_id|int|Sí|Id del medicamento que se receta|
 |&nbsp;&nbsp;&nbsp;&nbsp;indications|string|Sí|Indicaciones al paciente del medicamento|
@@ -550,6 +564,7 @@ Crea un texto con un payload JSON en base64url compatible con el estándar JSON 
    "_token":"<API_TOKEN>",
    "medic_id":123,
    "patient_id":456,
+   "instructions":"No consumir alcohol por 2 semanas",
    "medicines":[
       {
          "medicine_id":123,
@@ -645,6 +660,8 @@ Si la receta contiene medicamentos bajo fracciones legislativas con restriccione
 
 Dependiendo de la fecha de emisión del par de llaves que se usó para firmar la receta, es posible que el SAT no tenga publicada la llave publica del par de llaves en su base de datos de certificados públicos, por lo que la verificación podría fallar en tal ocasión.
 La verificación del certificado en el SAT también puede fallar si la base de datos de certificados públicos del SAT esta bajo mantenimiento.
+
+Los campos public_certificate_url y public_certificate_pem solo son regresados para recetas que contengan medicamentos con fracciones legislativas con restricciones de surtido.
 
 ### Parámetros:
 
@@ -791,7 +808,7 @@ Lista los medicamentos disponibles para ser recetados
    "search":""
 }
 ```
-returns => { medicines: MEDICINE [ ] }
+returns => { total_items: int, total_pages: int, items_per_page: int, page: int, medicines: MEDICINE [ ] }
 
 ## pharmacy.list  
 
@@ -845,19 +862,19 @@ Diccionario de errores más comunes para llamadas inválidas.
 
 10xxx => Authentication
 
--10001: Token parameter not received
+-10001: Token not recibido
 
--10002: Token not authorized to perform this request
+-10002: Token no authorizado
 
--10003: Invalid Token
+-10003: Token inválido / token ha expirado 
 
--10004: Token is not authorized to call this endpoint
+-10004: Token no autorizado para este tipo de petición
 
--10005: Revoked token
+-10005: Token revocado
 
   
 
--10100: Invalid Parameter
+-10100: Parametro inválido
 
   
 
