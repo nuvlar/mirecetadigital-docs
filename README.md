@@ -906,6 +906,7 @@ Diccionario de errores más comunes para llamadas inválidas.
 
 -13005 => Firma de json no pudo ser comprobada con su certificado público actual
 
+-13006 => Receta ya existente (firma ya utilizada en una receta)
   
 
 -14xxx => analysisRequest
