@@ -235,6 +235,7 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
    "medicine_id":123,
    "name":"Flanax",
    "fraction": "{ <METADATO> Fracción legislativa a la que pertenece el medicamento (1 a 6). Valor 0 es usado para marcar medicamentos cuyo registro sanitario ha sido revocado. Valor 7 es simbolico y equivalente a fraccion 6 }",
+   "ean": "{ <METADATO> Código EAN | NULL }",
    "group": "{ <METADATO LEGACY> 0: NO_CONTROLADO | 1: CONTROLADO | 2: ANTIBIOTICO | 3: VACUNA | 4: NARCOTICO }",
    "group_name":"{ <METADATO LEGACY> NO_CONTROLADO | CONTROLADO | ANTIBIOTICO | VACUNA | NARCOTICO }",
    "observations":"{ Notas misc. del medicamento. Ej: Nombre comercial de Bayer para medicamento con naproxeno sódico como ingrediente activo }",
@@ -809,6 +810,27 @@ Lista los medicamentos disponibles para ser recetados
 }
 ```
 returns => { total_items: int, total_pages: int, items_per_page: int, page: int, medicines: MEDICINE [ ] }
+
+## medicine.findByEAN
+
+Busca un medicamento individual basado en su código EAN.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|_token|string|Sí|El token de acceso de tu app|
+|ean|string|Sí|EAN de medicamento a buscar.|
+
+### Ejemplo de llamada:
+
+```json
+{
+   "_token":"<API_TOKEN>",
+   "ean": "....."
+}
+```
+returns => { medicine: MEDICINE }
 
 ## pharmacy.list  
 
