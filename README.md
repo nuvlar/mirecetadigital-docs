@@ -544,6 +544,9 @@ returns => { pem: string }
 
 Crea un texto con un payload JSON compatible con el estándar JSON Web Token y un token de validación para ese payload (válido por 10 minutos). El Payload tendrá que ser firmado por la librería de Javascript de MRD / a su discreción siguiendo el estandard FIDE (el firmado utiliza el estándar JWT RS256) para poder crearse la receta mediante la llamada `prescription.create`.
 
+Para especificar medicamentos listados en el diccionario de medicamentos `medicine.list`, especifique los parametros `medicine_id` e `indications` para cada medicamento a recetar.
+Para especificar medicamentos no listados en el diccionario de medicamentos, especifique los parametros `name`, `substance` e `indications` para cada medicamento a recetar.
+
 En caso de que el par de llaves del medico a utilizar haya caducado, se enviara el error con código '-11004'. En tal caso puede actualizar el certificado publico del medico desde el método `medic.edit`
 
 ### Parámetros:
@@ -555,8 +558,10 @@ En caso de que el par de llaves del medico a utilizar haya caducado, se enviara 
 |patient_id|int|Sí|El id del paciente que recibe la receta|
 |instructions|string|No|Indicaciones generales de la receta|
 |medicines|object array|Sí|Arreglo de objetos con las siguientes características:|
-|&nbsp;&nbsp;&nbsp;&nbsp;medicine_id|int|Sí|Id del medicamento que se receta|
-|&nbsp;&nbsp;&nbsp;&nbsp;indications|string|Sí|Indicaciones al paciente del medicamento|
+|&nbsp;&nbsp;&nbsp;&nbsp;medicine_id|int|No|Id del medicamento que se receta. Requerido si se especifica un medicamento de dicionario. No enviar campo (o usar valor `null`) para medicamentos no en diccionario|
+|&nbsp;&nbsp;&nbsp;&nbsp;name|string|No|Requerido y usado solo para medicamentos no en diccionario. Nombre del medicamento|
+|&nbsp;&nbsp;&nbsp;&nbsp;substance|string|No|Requerido y usado solo para medicamentos no en diccionario. Ingredientes activos del medicamento|
+|&nbsp;&nbsp;&nbsp;&nbsp;indications|string|Si|Indicaciones al paciente del medicamento|
 
 ### Ejemplo de llamada:
 
@@ -570,6 +575,11 @@ En caso de que el par de llaves del medico a utilizar haya caducado, se enviara 
       {
          "medicine_id":123,
          "indications":"Tomar cada 8 horas por 3 días"
+      },
+      {
+         "name": "Medicamento experimental",
+         "substance": "Substancia X + Substancia Y",
+         "indications": "Tomar una capsula cada 24 horas"
       }
    ]
 }
