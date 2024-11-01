@@ -149,6 +149,14 @@ En caso de existir un error, el sistema responde con un objeto json como el sigu
    "qr_fide_raw":"{ qr_fide antes de ser codificado en base 32 y procesado segun el estandard FIDE }",
    "prescription_url" : "{ URL para poder ver los detalles de una receta dentro del sitio web de MiRecetaDigital }",
    "instructions" : "No consumir alcohol por 2 semanas",
+   "diagnostics": [
+      {
+         "code": "A010",
+         "versionCode": 2024,
+         "name": "FIEBRE TIFOIDEA",
+         "codeName": "CIERTAS ENFERMEDADES INFECCIOSAS Y PARASITARIAS"
+      }
+   ],
    "medicines":[
       {
          "id":123,
@@ -540,9 +548,39 @@ Utiliza esta llamada para decodificar el archivo .key de la e.firma del doctor h
 ```
 returns => { pem: string }
 
+## prescription.cieSearch
+
+Consulta códigos vigentes de diagnostico CIE10 para usar en `prescription.createJson`.
+
+El texto especificado en el parametro `search` se usara para buscar códigos de diagnostico / redacción del diagnostico.
+
+Use el campo `code` correspondiente al diagnostico que desea usar en una receta.
+Campo `name` corresponde al diagnostico redactado en texto.
+Campo `code_name` corresponde a categoria del diagnostico.
+
+### Parámetros:
+
+|Nombre|Tipo|Requerido|Explicacion
+|--|--|--|--|
+|search|string|Sí|Texto a buscar en el diagnostico|
+
+### Ejemplo de llamada:
+
+```json
+{
+   "search": "tifoi"
+}
+``` 
+
+returns => { matches: [ {code: string, name: string, code_name: string}, ... ] }
+
 ## prescription.createJson
 
 Crea un texto con un payload JSON compatible con el estándar JSON Web Token y un token de validación para ese payload (válido por 10 minutos). El Payload tendrá que ser firmado por la librería de Javascript de MRD / a su discreción siguiendo el estandard FIDE (el firmado utiliza el estándar JWT RS256) para poder crearse la receta mediante la llamada `prescription.create`.
+
+Para especificar un diagnostico, especifique el código CIE10 correspondiente en el campo `diagnostic_code`.
+Puede consultar los códigos vigentes mediante el endpoint `prescription.cieSearch`.
+Alternativamente puede consultar el diccionario vigente del CIE en este enlace (códigos con campo 'valid' positivo): http://dgis.salud.gob.mx/contenidos/intercambio/diagnostico_gobmx.html
 
 Para especificar medicamentos listados en el diccionario de medicamentos `medicine.list`, especifique los parametros `medicine_id` e `indications` para cada medicamento a recetar.
 Para especificar medicamentos no listados en el diccionario de medicamentos, especifique los parametros `name`, `substance` e `indications` para cada medicamento a recetar.
@@ -557,6 +595,7 @@ En caso de que el par de llaves del medico a utilizar haya caducado, se enviara 
 |medic_id|int|Sí|El id de MRD del médico que expide la receta|
 |patient_id|int|Sí|El id del paciente que recibe la receta|
 |instructions|string|No|Indicaciones generales de la receta|
+|diagnostic_code|string|No|Código de diagnostico CIE10|
 |medicines|object array|Sí|Arreglo de objetos con las siguientes características:|
 |&nbsp;&nbsp;&nbsp;&nbsp;medicine_id|int|No|Id del medicamento que se receta. Requerido si se especifica un medicamento de dicionario. No enviar campo (o usar valor `null`) para medicamentos no en diccionario|
 |&nbsp;&nbsp;&nbsp;&nbsp;name|string|No|Requerido y usado solo para medicamentos no en diccionario. Nombre del medicamento|
@@ -571,6 +610,7 @@ En caso de que el par de llaves del medico a utilizar haya caducado, se enviara 
    "medic_id":123,
    "patient_id":456,
    "instructions":"No consumir alcohol por 2 semanas",
+   "diagnostic_code":"A010",
    "medicines":[
       {
          "medicine_id":123,
