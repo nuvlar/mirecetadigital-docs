@@ -41,7 +41,7 @@ Los tokens serán generados por parte de MRD y tendrán que ser enviados a trav�
 
 El API de MRD se puede acceder a través del estándar [JSON-RPC](https://www.jsonrpc.org/specification) a través de peticiones POST al siguiente endpoint:
 
-`https://mirecetadigital.com/api/v1/endpoint.php`
+`https://mimd.mx/api/v1/fide_endpoint.php`
   
 
 Cada petición POST tendrá que contener en su payload un objeto JSON con la siguiente estructura:
